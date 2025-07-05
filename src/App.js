@@ -1,10 +1,18 @@
 import React, { useState } from 'react';
-import { mockWebsites, mockManifest } from './data/mockData';
+import { mockWebsites } from './data/mockData';
 import mockExistingConfig from './data/config.json';
+import baseManifest from './data/manifest.json';
+import extraManifest from './data/extra-manifest.json';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import WebsiteSelector from './components/WebsiteSelector';
 import SchemaEditor from './components/SchemaEditor';
+
+
+const mockManifest = [
+	...extraManifest,
+	...baseManifest,
+];
 
 const SuiteCommerceConfigApp = () => {
 	const [currentView, setCurrentView] = useState('selector'); // 'selector' | 'editor'

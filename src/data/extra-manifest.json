@@ -1,0 +1,1160 @@
+[
+  {
+    "type": "object",
+    "group": {
+      "id": "extensions",
+      "title": "Extensions",
+      "description": "Extensions configuration"
+    }
+  },
+  {
+    "type": "object",
+    "group": {
+      "id": "awaCommerceAccount",
+      "title": "AWC Account",
+      "description": "Configurations related to account pages"
+    },
+    "subtab": {
+      "id": "awaCommerceAccountGeneral",
+      "title": "Account",
+      "description": "Account configuration",
+      "group": "awaCommerceAccount"
+    },
+    "properties": {
+      "awaCommerce.account.favorites.addToCart": {
+        "group": "awaCommerceAccount",
+        "subtab": "awaCommerceAccountGeneral",
+        "type": "string",
+        "title": "Favorites Add to Cart",
+        "description": "Choose an option to specify the add to cart behavior in the favorites page.",
+        "enum": ["MultiAdd", "SingleAdd", "Disabled"],
+        "default": "MultiAdd"
+      },
+      "awaCommerce.account.reorder.addToCart": {
+        "group": "awaCommerceAccount",
+        "subtab": "awaCommerceAccountGeneral",
+        "type": "string",
+        "title": "Reorder Add to Cart",
+        "description": "Choose an option to specify the add to cart behavior in the reorder page.",
+        "enum": ["MultiAdd", "SingleAdd", "Disabled"],
+        "default": "MultiAdd"
+      }
+    }
+  },
+  {
+    "type": "object",
+    "subtab": {
+      "id": "awaCommerceAccountOrderHistory",
+      "title": "Order History",
+      "description": "Order history configuration",
+      "group": "awaCommerceAccount"
+    },
+    "properties": {
+      "awaCommerce.account.orderHistory.pageSize": {
+        "group": "awaCommerceAccount",
+        "subtab": "awaCommerceAccountOrderHistory",
+        "type": "integer",
+        "title": "Order History Page Size",
+        "description": "Number of orders to show per page in the order history page",
+        "default": 30,
+        "mandatory": true
+      },
+      "awaCommerce.account.orderHistory.overviewPageSize": {
+        "group": "awaCommerceAccount",
+        "subtab": "awaCommerceAccountOrderHistory",
+        "type": "integer",
+        "title": "Order History Overview Page Size",
+        "description": "Number of orders to show in the order history overview",
+        "default": 5,
+        "mandatory": true
+      }
+    }
+  },
+  {
+    "type": "object",
+    "subtab": {
+      "id": "awaCommerceSearchCategory",
+      "title": "Category",
+      "description": "Configurations for Category functionality",
+      "group": "awaCommerceSearch"
+    },
+    "properties": {
+      "awaCommerce.category.showBannerImagesUntilLevel": {
+        "group": "awaCommerceSearch",
+        "subtab": "awaCommerceSearchCategory",
+        "type": "integer",
+        "title": "Show Banner Images Until Level",
+        "description": "Show banner images until this level",
+        "default": 1,
+        "mandatory": true
+      },
+      "awaCommerce.category.subcategoryFacet": {
+        "group": "awaCommerceSearch",
+        "subtab": "awaCommerceSearchCategory",
+        "type": "string",
+        "title": "Subcategory Facet",
+        "description": "Facet to use as a fake subcategory"
+      }
+    }
+  },
+  {
+    "type": "object",
+    "subtab": {
+      "id": "awaCommerceGeneralCaptcha",
+      "title": "Google Captcha",
+      "group": "awaCommerceGeneral",
+      "description": "Captcha Configuration"
+    },
+    "properties": {
+      "awaCommerce.general.recaptcha.siteKey": {
+        "group": "awaCommerceGeneral",
+        "subtab": "awaCommerceGeneralCaptcha",
+        "type": "string",
+        "title": "Google Captcha Site Key",
+        "description": "Google Captcha Site Key"
+      },
+      "awaCommerce.general.recaptcha.secretKey": {
+        "group": "awaCommerceGeneral",
+        "subtab": "awaCommerceGeneralCaptcha",
+        "type": "string",
+        "title": "Google Captcha Secret Key",
+        "description": "Key from general preferences of the google captcha field",
+        "default": "custscript_googlecaptcha_secret_key",
+        "mandatory": true
+      },
+      "awaCommerce.general.recaptcha.debug": {
+        "group": "awaCommerceGeneral",
+        "subtab": "awaCommerceGeneralCaptcha",
+        "type": "boolean",
+        "title": "Activate Logs on SSP",
+        "description": "Display logs on the SSP",
+        "default": false
+      },
+      "awaCommerce.general.recaptcha.verifyUrl": {
+        "group": "awaCommerceGeneral",
+        "subtab": "awaCommerceGeneralCaptcha",
+        "type": "string",
+        "title": "Google Captcha Verify URL",
+        "description": "Google Captcha Verify URL",
+        "default": "https://www.google.com/recaptcha/api/siteverify",
+        "mandatory": true
+      },
+      "awaCommerce.general.recaptcha.threshold": {
+        "group": "awaCommerceGeneral",
+        "subtab": "awaCommerceGeneralCaptcha",
+        "type": "string",
+        "title": "Google Captcha Threshold",
+        "description": "Google Captcha Threshold where 0.1 is bot and 0.9 regular user. 0.5 is in the mid.",
+        "default": "0.5",
+        "mandatory": true
+      },
+      "awaCommerce.general.recaptcha.genericError": {
+        "group": "awaCommerceGeneral",
+        "subtab": "awaCommerceGeneralCaptcha",
+        "type": "string",
+        "title": "Generic Error",
+        "description": "Generic Error",
+        "default": "Google reCaptcha invalid",
+        "mandatory": true
+      },
+      "awaCommerce.general.recaptcha.thresholdError": {
+        "group": "awaCommerceGeneral",
+        "subtab": "awaCommerceGeneralCaptcha",
+        "type": "string",
+        "title": "is Above Threshold Error",
+        "description": "Threshold Error",
+        "default": "Google reCaptcha has failed, please try again.",
+        "mandatory": true
+      },
+      "awaCommerce.general.recaptcha.errors": {
+        "group": "awaCommerceGeneral",
+        "subtab": "awaCommerceGeneralCaptcha",
+        "type": "array",
+        "title": "Mapped Errors",
+        "description": "Map API error codes to messages",
+        "items": {
+          "type": "object",
+          "properties": {
+            "message": {
+              "title": "message",
+              "description": "The message to display when the error occurs",
+              "type": "string",
+              "translate": true
+            },
+            "code": {
+              "title": "code",
+              "description": "The code of the error",
+              "type": "string"
+            }
+          }
+        },
+        "default": [
+          {
+            "message": "Google reCaptcha token expired, please try again.",
+            "code": "timeout-or-duplicate"
+          },
+          {
+            "message": "Something went wrong while validating Google reCaptcha, please try again.",
+            "code": "invalid-input-response"
+          },
+          {
+            "message": "The secret parameter is missing, please try again.",
+            "code": "missing-input-secret"
+          },
+          {
+            "message": "The request is invalid or malformed, please try again.",
+            "code": "bad-request"
+          },
+          {
+            "message": "The secret parameter is invalid or malformed, please try again.",
+            "code": "invalid-input-secret"
+          },
+          {
+            "message": "The response parameter is missing, please try again.",
+            "code": "missing-input-response"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "object",
+    "group": {
+      "id": "awaCommerceGeneral",
+      "title": "AWC General",
+      "description": "General site configurations"
+    },
+    "subtab": {
+      "id": "awaCommerceGeneral",
+      "title": "General",
+      "group": "awaCommerceGeneral",
+      "description": "General site configurations"
+    },
+    "properties": {
+      "awaCommerce.general.siteName": {
+        "group": "awaCommerceGeneral",
+        "subtab": "awaCommerceGeneral",
+        "type": "string",
+        "title": "Site Name",
+        "description": "Name of the site",
+        "mandatory": true,
+        "default": "AWA Commerce"
+      },
+      "awaCommerce.general.scrollToTopPosition": {
+        "group": "awaCommerceGeneral",
+        "subtab": "awaCommerceGeneral",
+        "type": "number",
+        "title": "Scroll to Top Position",
+        "description": "Position to scroll to top",
+        "mandatory": true,
+        "default": 1500
+      },
+      "awaCommerce.general.addedToCartBehavior": {
+        "group": "awaCommerceGeneral",
+        "subtab": "awaCommerceGeneral",
+        "type": "string",
+        "enum": ["modal", "toast"],
+        "title": "Added to Cart Behavior",
+        "description": "Behavior when an item is added to the cart",
+        "default": "modal"
+      },
+      "awaCommerce.general.cartPage": {
+        "group": "awaCommerceGeneral",
+        "subtab": "awaCommerceGeneral",
+        "type": "boolean",
+        "title": "Cart Page",
+        "description": "Instead of only showing a cart drawer, also show a cart page in /cart",
+        "default": false
+      }
+    }
+  },
+  {
+    "type": "object",
+    "subtab": {
+      "id": "awaCommerceGeneralEventTracking",
+      "title": "Event Tracking",
+      "description": "Event tracking configuration",
+      "group": "awaCommerceGeneral"
+    },
+    "properties": {
+      "awaCommerce.general.eventTracking.scriptURL": {
+        "group": "awaCommerceGeneral",
+        "subtab": "awaCommerceGeneralEventTracking",
+        "type": "string",
+        "title": "Script URL",
+        "description": "URL to the event tracking script, for example `https://www.googletagmanager.com/gtm.js?id=XXXXX`"
+      }
+    }
+  },
+  {
+    "type": "object",
+    "subtab": {
+      "id": "awaCommerceGeneralReviews",
+      "title": "Reviews",
+      "description": "Configurations for reviews",
+      "group": "awaCommerceGeneral"
+    },
+    "properties": {
+      "awaCommerce.general.reviews.showReviewsInSearch": {
+        "group": "awaCommerceGeneral",
+        "subtab": "awaCommerceGeneralReviews",
+        "type": "boolean",
+        "title": "Show Reviews in Search Results",
+        "description": "Show reviews in PLP, related, corelated, etc.",
+        "default": true
+      },
+      "awaCommerce.general.reviews.showReviewCountInSearch": {
+        "group": "awaCommerceGeneral",
+        "subtab": "awaCommerceGeneralReviews",
+        "type": "boolean",
+        "title": "Show Review Count in Search Results",
+        "description": "Show review count in PLP, related, corelated, etc.",
+        "default": true
+      },
+      "awaCommerce.general.reviews.sortOptions": {
+        "group": "awaCommerceGeneral",
+        "subtab": "awaCommerceGeneralReviews",
+        "type": "array",
+        "title": "Sort Options",
+        "description": "Sort options for reviews",
+        "items": {
+          "type": "object",
+          "properties": {
+            "value": { "type": "string", "title": "Value" },
+            "isDefault": {
+              "type": "boolean",
+              "title": "Is Default",
+              "default": false
+            }
+          }
+        },
+        "default": [
+          { "value": "rating:DESC", "isDefault": true },
+          { "value": "rating:ASC", "isDefault": false },
+          { "value": "created_on:DESC", "isDefault": false }
+        ]
+      },
+      "awaCommerce.general.reviews.showReviewListInPDP": {
+        "group": "awaCommerceGeneral",
+        "subtab": "awaCommerceGeneralReviews",
+        "type": "boolean",
+        "title": "Show Review List in PDP",
+        "description": "Show review list in PDP",
+        "default": true
+      },
+      "awaCommerce.general.reviews.showReviewsInPDP": {
+        "group": "awaCommerceGeneral",
+        "subtab": "awaCommerceGeneralReviews",
+        "type": "boolean",
+        "title": "Show Reviews in PDP",
+        "description": "Show review total and count in PDP",
+        "default": true
+      }
+    }
+  },
+  {
+    "type": "object",
+    "subtab": {
+      "id": "awaCommerceGeneralStyles",
+      "title": "Styles",
+      "description": "Styles configuration",
+      "group": "awaCommerceGeneral"
+    },
+    "properties": {
+      "awaCommerce.general.styles.variables": {
+        "group": "awaCommerceGeneral",
+        "subtab": "awaCommerceGeneralStyles",
+        "type": "array",
+        "title": "CSS Variables",
+        "description": "Override CSS variables",
+        "items": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string",
+              "title": "Name",
+              "description": "Name of the CSS variable, for example `--color-primary`",
+              "mandatory": true
+            },
+            "value": {
+              "type": "string",
+              "title": "Value",
+              "description": "Value of the CSS variable, for example `#f00`",
+              "mandatory": true
+            }
+          }
+        },
+        "default": []
+      }
+    }
+  },
+  {
+    "type": "object",
+    "subtab": {
+      "id": "awaCommerceGeneralTranslations",
+      "title": "Translations",
+      "description": "Translations configuration",
+      "group": "awaCommerceGeneral"
+    },
+    "properties": {
+      "awaCommerce.general.translations.extraTranslations": {
+        "group": "awaCommerceGeneral",
+        "subtab": "awaCommerceGeneralTranslations",
+        "type": "array",
+        "title": "Extra Translations",
+        "description": "Extra translations",
+        "items": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string",
+              "title": "Name",
+              "description": "Name of the translation, for example `creditCardForm.cardNumberRequired`",
+              "mandatory": true
+            },
+            "value": {
+              "type": "string",
+              "title": "Value",
+              "description": "Value of the translation, for example `Card Number is required`",
+              "mandatory": true
+            },
+            "language": {
+              "type": "string",
+              "title": "Language",
+              "description": "Language of the translation, for example `en`",
+              "mandatory": true
+            }
+          }
+        },
+        "default": []
+      },
+      "awaCommerce.general.translations.locales": {
+        "group": "awaCommerceGeneral",
+        "subtab": "awaCommerceGeneralTranslations",
+        "type": "array",
+        "title": "Locales",
+        "description": "Available locales shown in the language switch",
+        "items": { "type": "string" },
+        "default": ["en-US", "es-ES"]
+      }
+    }
+  },
+  {
+    "type": "object",
+    "group": {
+      "id": "awaCommerceProduct",
+      "title": "AWC Product",
+      "description": "Configurations related to product pages"
+    },
+    "subtab": {
+      "id": "awaCommerceProductGeneral",
+      "title": "Product",
+      "description": "Product configuration",
+      "group": "awaCommerceProduct"
+    },
+    "properties": {
+      "awaCommerce.product.autoPlayImageSlider": {
+        "group": "awaCommerceProduct",
+        "subtab": "awaCommerceProductGeneral",
+        "type": "boolean",
+        "title": "Auto Play Image Slider",
+        "description": "Automatically play the image slider",
+        "default": true
+      },
+      "awaCommerce.product.brandField": {
+        "group": "awaCommerceProduct",
+        "subtab": "awaCommerceProductGeneral",
+        "type": "string",
+        "title": "Brand Field",
+        "description": "Field to show as brand",
+        "default": "brand"
+      },
+      "awaCommerce.product.imageSizes": {
+        "group": "awaCommerceProduct",
+        "subtab": "awaCommerceProductGeneral",
+        "type": "string",
+        "title": "Image Sizes",
+        "description": "Image sizes to use in the product page (needs to be a valid value for the `img` tag `sizes` attribute)",
+        "default": "(max-width: 768px) calc(100vw - 40px), 45vw",
+        "mandatory": true
+      },
+      "awaCommerce.product.transitionAnimation": {
+        "group": "awaCommerceProduct",
+        "subtab": "awaCommerceProductGeneral",
+        "type": "boolean",
+        "title": "Transition Animation",
+        "description": "Enable image transition animation when navigating to the product page",
+        "default": true
+      },
+      "awaCommerce.product.showStock": {
+        "group": "awaCommerceProduct",
+        "subtab": "awaCommerceProductGeneral",
+        "type": "boolean",
+        "title": "Show Stock",
+        "description": "Show stock information in the product page",
+        "default": false
+      },
+      "awaCommerce.product.showRelatedItems": {
+        "group": "awaCommerceProduct",
+        "subtab": "awaCommerceProductGeneral",
+        "type": "boolean",
+        "title": "Show Related Items",
+        "description": "Show related items in the product page",
+        "default": true
+      },
+      "awaCommerce.product.showCorrelatedItems": {
+        "group": "awaCommerceProduct",
+        "subtab": "awaCommerceProductGeneral",
+        "type": "boolean",
+        "title": "Show Correlated Items",
+        "description": "Show correlated items in the product page",
+        "default": true
+      },
+      "awaCommerce.product.showLastViewed": {
+        "group": "awaCommerceProduct",
+        "subtab": "awaCommerceProductGeneral",
+        "type": "boolean",
+        "title": "Show Last Viewed",
+        "description": "Show last viewed items in the product page",
+        "default": true
+      },
+      "awaCommerce.product.fieldset": {
+        "group": "awaCommerceProduct",
+        "subtab": "awaCommerceProductGeneral",
+        "type": "string",
+        "title": "Fieldset",
+        "description": "Fieldset to use in the product page",
+        "default": "awa_commerce_details",
+        "mandatory": true
+      },
+      "awaCommerce.product.notFoundImage": {
+        "group": "awaCommerceProduct",
+        "subtab": "awaCommerceProductGeneral",
+        "type": "string",
+        "title": "Not Found Image",
+        "description": "Image to display when an item has no images",
+        "default": "/not-found.jpg",
+        "mandatory": true
+      }
+    }
+  },
+  {
+    "type": "object",
+    "subtab": {
+      "id": "awaCommerceSearchAlgolia",
+      "title": "Algolia",
+      "description": "Algolia configuration",
+      "group": "awaCommerceSearch"
+    },
+    "properties": {
+      "awaCommerce.search.algolia.enabled": {
+        "group": "awaCommerceSearch",
+        "subtab": "awaCommerceSearchAlgolia",
+        "type": "boolean",
+        "title": "Enabled",
+        "description": "Enable algolia search"
+      },
+      "awaCommerce.search.algolia.apiKey": {
+        "group": "awaCommerceSearch",
+        "subtab": "awaCommerceSearchAlgolia",
+        "type": "string",
+        "title": "API Key",
+        "description": "API Key for algolia"
+      },
+      "awaCommerce.search.algolia.appId": {
+        "group": "awaCommerceSearch",
+        "subtab": "awaCommerceSearchAlgolia",
+        "type": "string",
+        "title": "Algolia App ID",
+        "description": "Algolia App ID"
+      },
+      "awaCommerce.search.algolia.multiSelectFacets": {
+        "group": "awaCommerceSearch",
+        "subtab": "awaCommerceSearchAlgolia",
+        "type": "boolean",
+        "title": "Multi Select Facets",
+        "description": "Multi select facets for algolia"
+      },
+      "awaCommerce.search.algolia.agent": {
+        "group": "awaCommerceSearch",
+        "subtab": "awaCommerceSearchAlgolia",
+        "type": "string",
+        "title": "Algolia Agent",
+        "description": "Algolia Agent"
+      }
+    }
+  },
+  {
+    "type": "object",
+    "group": {
+      "id": "awaCommerceSearch",
+      "title": "AWC Search",
+      "description": "Configurations related to search"
+    },
+    "subtab": {
+      "id": "awaCommerceSearchGeneral",
+      "title": "Search",
+      "description": "Configurations for PLP and Search functionality",
+      "group": "awaCommerceSearch"
+    },
+    "properties": {
+      "awaCommerce.search.resultsPerPage": {
+        "group": "awaCommerceSearch",
+        "subtab": "awaCommerceSearchGeneral",
+        "type": "array",
+        "title": "Search Results Per Page",
+        "description": "Available options for results per page in PLP.",
+        "items": {
+          "type": "object",
+          "properties": {
+            "value": {
+              "type": "integer",
+              "title": "Value",
+              "description": "Value of the option",
+              "mandatory": true
+            },
+            "preload": {
+              "type": "boolean",
+              "title": "Preload",
+              "description": "If true, it will be preloaded when sort menu is open"
+            },
+            "default": {
+              "type": "boolean",
+              "title": "Default",
+              "description": "Is default ? If true, it will be the active search results per page by default. "
+            }
+          }
+        },
+        "default": [
+          { "value": 12, "default": false },
+          { "value": 24, "preload": true, "default": true },
+          { "value": 48, "preload": true, "default": false }
+        ],
+        "mandatory": true
+      },
+      "awaCommerce.search.closeOtherFacetsOnOpen": {
+        "group": "awaCommerceSearch",
+        "subtab": "awaCommerceSearchGeneral",
+        "type": "boolean",
+        "title": "Close Other Facets On Open",
+        "description": "Close other facets when opening a facet accordion",
+        "default": true
+      },
+      "awaCommerce.search.closeFacetsOnChange": {
+        "group": "awaCommerceSearch",
+        "subtab": "awaCommerceSearchGeneral",
+        "type": "boolean",
+        "title": "Close Facets On Change",
+        "description": "Close the facets menu when changing facets",
+        "default": true
+      },
+      "awaCommerce.search.imageSizes": {
+        "group": "awaCommerceSearch",
+        "subtab": "awaCommerceSearchGeneral",
+        "type": "string",
+        "title": "Image Sizes",
+        "description": "Image sizes to use in the PLP, this needs to be a valid HTML image sizes attribute",
+        "default": "300px",
+        "mandatory": true
+      },
+      "awaCommerce.search.fixedFacetsOnDesktop": {
+        "group": "awaCommerceSearch",
+        "subtab": "awaCommerceSearchGeneral",
+        "type": "boolean",
+        "title": "Fixed Facets On Desktop",
+        "description": "Always show facets in a drawer instead of a sidebar",
+        "default": false
+      },
+      "awaCommerce.search.highlightSearch": {
+        "group": "awaCommerceSearch",
+        "subtab": "awaCommerceSearchGeneral",
+        "type": "boolean",
+        "title": "Highlight Search",
+        "description": "Highlight the search term in the search results (only works with search providers that support this like typesense or algolia)",
+        "default": true
+      },
+      "awaCommerce.search.multiAddToCart": {
+        "group": "awaCommerceSearch",
+        "subtab": "awaCommerceSearchGeneral",
+        "type": "boolean",
+        "title": "Multi Add To Cart",
+        "description": "Enable multi add to cart functionality in PLP",
+        "default": true
+      },
+      "awaCommerce.search.lastSearched": {
+        "group": "awaCommerceSearch",
+        "subtab": "awaCommerceSearchGeneral",
+        "type": "boolean",
+        "title": "Last Searched",
+        "description": "Show the last searched terms in the typeahead",
+        "default": false
+      },
+      "awaCommerce.search.fieldset": {
+        "group": "awaCommerceSearch",
+        "subtab": "awaCommerceSearchGeneral",
+        "type": "string",
+        "title": "Fieldset",
+        "description": "Fieldset to use for the search",
+        "default": "awa_commerce_search",
+        "mandatory": true
+      },
+      "awaCommerce.search.sortOptions": {
+        "group": "awaCommerceSearch",
+        "subtab": "awaCommerceSearchGeneral",
+        "type": "array",
+        "title": "Sort Options",
+        "description": "Available sorting options for the Sort By dropdown/drawer",
+        "items": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "title": "id",
+              "description": "id has the format $field:$asc, examples : 'relevance:desc', 'onlinecustomerprice:asc', 'onlinecustomerprice:desc'. These ids must be configured in Setup Website > Search > Sort fields",
+              "mandatory": true
+            },
+            "default": {
+              "type": "boolean",
+              "title": "Is default",
+              "description": "Is default ? If true, it will be the active search sort option by default. "
+            },
+            "preload": {
+              "type": "boolean",
+              "title": "Preload",
+              "description": "If true, it will be preloaded when sort menu is open"
+            }
+          }
+        },
+        "default": [
+          { "id": "relevance:desc", "default": true, "preload": true },
+          {
+            "id": "onlinecustomerprice:asc",
+            "default": false,
+            "preload": true
+          },
+          { "id": "onlinecustomerprice:desc", "default": false }
+        ]
+      },
+      "awaCommerce.search.preloadNext": {
+        "group": "awaCommerceSearch",
+        "subtab": "awaCommerceSearchGeneral",
+        "type": "string",
+        "title": "Preload Next",
+        "description": "Choose the preload behavior for the next page in the search results",
+        "enum": ["viewport", "intent", "render"],
+        "default": "viewport"
+      },
+      "awaCommerce.search.masterFacets": {
+        "group": "awaCommerceSearch",
+        "subtab": "awaCommerceSearchGeneral",
+        "type": "array",
+        "title": "Master Facets",
+        "description": "Master facets to apply to all item api requests",
+        "items": {
+          "type": "object",
+          "properties": {
+            "field": {
+              "type": "string",
+              "title": "Field",
+              "description": "Master facet field ID",
+              "mandatory": true
+            },
+            "value": {
+              "type": "string",
+              "title": "Value",
+              "description": "Master facet value"
+            }
+          }
+        }
+      },
+      "awaCommerce.search.hiddenFacets": {
+        "group": "awaCommerceSearch",
+        "subtab": "awaCommerceSearchGeneral",
+        "type": "array",
+        "title": "Hidden Facets",
+        "description": "Facets to hide in the PLP",
+        "items": { "type": "string", "title": "Hidden Facet" }
+      }
+    }
+  },
+  {
+    "type": "object",
+    "subtab": {
+      "id": "awaCommerceSearchFacets",
+      "title": "Facets",
+      "description": "Facets configuration",
+      "group": "awaCommerceSearch"
+    },
+    "properties": {
+      "awaCommerce.search.facets.selectFacets": {
+        "group": "awaCommerceSearch",
+        "subtab": "awaCommerceSearchFacets",
+        "type": "array",
+        "title": "Select Facets",
+        "description": "Configurations for select facets",
+        "mandatory": true,
+        "items": {
+          "type": "object",
+          "properties": {
+            "url": {
+              "type": "string",
+              "title": "URL",
+              "description": "URL of the facet",
+              "mandatory": true
+            },
+            "index": {
+              "type": "integer",
+              "title": "Index",
+              "description": "Index of the facet, if not provided or another facet has the same index, alphabeticall order will be used"
+            },
+            "color": {
+              "type": "boolean",
+              "title": "Color",
+              "description": "Facet is a color type"
+            },
+            "columnWidth": {
+              "type": "integer",
+              "title": "Column Width",
+              "description": "Width of the column in pixels"
+            },
+            "hideCount": {
+              "type": "boolean",
+              "title": "Hide Count",
+              "description": "Hide the number of items for the facet combination"
+            },
+            "showSearchAfterCount": {
+              "type": "integer",
+              "title": "Show Search After Count",
+              "description": "Show the search input for the facet after the number of items is greater than this value"
+            },
+            "hideTitle": {
+              "type": "boolean",
+              "title": "Hide Title",
+              "description": "Hide the title of the facet (usefull for color facets)"
+            },
+            "showAlphabetAfterCount": {
+              "type": "integer",
+              "title": "Show Alphabet After Count",
+              "description": "Show the alphabet selector after the number of items is greater than this value"
+            }
+          }
+        },
+        "default": []
+      },
+      "awaCommerce.search.facets.switchFacets": {
+        "group": "awaCommerceSearch",
+        "subtab": "awaCommerceSearchFacets",
+        "type": "array",
+        "title": "Switch Facets",
+        "description": "Configurations for switch facets",
+        "mandatory": true,
+        "items": {
+          "type": "object",
+          "properties": {
+            "url": {
+              "type": "string",
+              "title": "URL",
+              "description": "URL of the facet",
+              "mandatory": true
+            },
+            "index": {
+              "type": "integer",
+              "title": "Index",
+              "description": "Index of the facet, if not provided or another facet has the same index, alphabeticall order will be used"
+            },
+            "withAccordion": {
+              "type": "boolean",
+              "title": "With Accordion",
+              "description": "Show the facet with an accordion"
+            },
+            "values": {
+              "type": "string",
+              "title": "Values",
+              "description": "Comma separated values for the facet, the values are the URL identifiers for the facet and are also used as translation keys"
+            }
+          }
+        },
+        "default": []
+      },
+      "awaCommerce.search.facets.starsFacets": {
+        "group": "awaCommerceSearch",
+        "subtab": "awaCommerceSearchFacets",
+        "type": "array",
+        "title": "Stars Facets",
+        "description": "Configurations for stars facets",
+        "mandatory": true,
+        "items": {
+          "type": "object",
+          "properties": {
+            "url": {
+              "type": "string",
+              "title": "URL",
+              "description": "URL of the facet",
+              "mandatory": true
+            },
+            "index": {
+              "type": "integer",
+              "title": "Index",
+              "description": "Index of the facet, if not provided or another facet has the same index, alphabeticall order will be used"
+            }
+          }
+        },
+        "default": []
+      },
+      "awaCommerce.search.facets.numberFacets": {
+        "group": "awaCommerceSearch",
+        "subtab": "awaCommerceSearchFacets",
+        "type": "array",
+        "title": "Number Facets",
+        "description": "Configurations for number facets",
+        "mandatory": true,
+        "items": {
+          "type": "object",
+          "properties": {
+            "url": {
+              "type": "string",
+              "title": "URL",
+              "description": "URL of the facet",
+              "mandatory": true
+            },
+            "index": {
+              "type": "integer",
+              "title": "Index",
+              "description": "Index of the facet, if not provided or another facet has the same index, alphabeticall order will be used"
+            },
+            "isCurrency": {
+              "type": "boolean",
+              "title": "Is Currency",
+              "description": "Facet is a currency type"
+            },
+            "ranges": {
+              "type": "string",
+              "title": "Ranges",
+              "description": "Ranges for the facets in this format: '[min, max], [min2, max2]' (valid json array without starting and ending brackets), for no max use false"
+            }
+          }
+        },
+        "default": []
+      }
+    }
+  },
+  {
+    "type": "object",
+    "subtab": {
+      "id": "awaCommerceSearchImageShower",
+      "title": "Image Shower",
+      "description": "Image shower configuration",
+      "group": "awaCommerceSearch"
+    },
+    "properties": {
+      "awaCommerce.search.imageShower.animationDelay": {
+        "group": "awaCommerceSearch",
+        "subtab": "awaCommerceSearchImageShower",
+        "type": "integer",
+        "title": "Animation Delay",
+        "description": "Delay between movement animations",
+        "default": 800,
+        "mandatory": true
+      },
+      "awaCommerce.search.imageShower.animationDuration": {
+        "group": "awaCommerceSearch",
+        "subtab": "awaCommerceSearchImageShower",
+        "type": "integer",
+        "title": "Animation Duration",
+        "description": "Time the movement animation takes to complete",
+        "default": 300,
+        "mandatory": true
+      },
+      "awaCommerce.search.imageShower.maxImages": {
+        "group": "awaCommerceSearch",
+        "subtab": "awaCommerceSearchImageShower",
+        "type": "integer",
+        "title": "Max Images",
+        "description": "Maximum number of images to show in the image shower",
+        "default": 5,
+        "mandatory": true
+      },
+      "awaCommerce.search.imageShower.progressBarExitDuration": {
+        "group": "awaCommerceSearch",
+        "subtab": "awaCommerceSearchImageShower",
+        "type": "integer",
+        "title": "Progress Bar Exit Duration",
+        "description": "Duration of the progress bar exit animation",
+        "default": 100,
+        "mandatory": true
+      }
+    }
+  },
+  {
+    "type": "object",
+    "subtab": {
+      "id": "awaCommerceSearchTags",
+      "title": "Tags",
+      "description": "Tags configuration",
+      "group": "awaCommerceSearch"
+    },
+    "properties": {
+      "awaCommerce.search.tags.tags": {
+        "group": "awaCommerceSearch",
+        "subtab": "awaCommerceSearchTags",
+        "type": "array",
+        "title": "Tags",
+        "description": "Tags to show for products",
+        "mandatory": true,
+        "items": {
+          "type": "object",
+          "properties": {
+            "field": {
+              "type": "string",
+              "title": "Field",
+              "description": "Field to check if show the tag or not (this will be also used as translation key for the tag, translation should be present at: 'tags.labels.{field}')",
+              "mandatory": true
+            },
+            "position": {
+              "type": "string",
+              "title": "Position",
+              "description": "Position of the tag on the product image",
+              "enum": ["left", "right"],
+              "mandatory": true
+            },
+            "shape": {
+              "type": "string",
+              "title": "Shape",
+              "description": "Shape of the tag",
+              "enum": ["arrow", "rectangle", "rounded", "trapezoid"],
+              "mandatory": true
+            },
+            "color": {
+              "type": "string",
+              "title": "Color",
+              "description": "Color of the tag",
+              "mandatory": true
+            }
+          }
+        }
+      }
+    }
+  },
+  {
+    "type": "object",
+    "subtab": {
+      "id": "awaCommerceSearchTypeahead",
+      "title": "Typeahead",
+      "description": "Configurations for typeahead",
+      "group": "awaCommerceSearch"
+    },
+    "properties": {
+      "awaCommerce.search.typeahead.maxItemCount": {
+        "group": "awaCommerceSearch",
+        "subtab": "awaCommerceSearchTypeahead",
+        "type": "integer",
+        "title": "Max Item Count",
+        "description": "Max item count to show in typeahead",
+        "default": 5,
+        "mandatory": true
+      },
+      "awaCommerce.search.typeahead.minCharacters": {
+        "group": "awaCommerceSearch",
+        "subtab": "awaCommerceSearchTypeahead",
+        "type": "integer",
+        "title": "Minimum Characters",
+        "description": "Minimum characters to perform search in typeahead",
+        "default": 3,
+        "mandatory": true
+      },
+      "awaCommerce.search.typeahead.sort": {
+        "group": "awaCommerceSearch",
+        "subtab": "awaCommerceSearchTypeahead",
+        "type": "string",
+        "title": "Sort",
+        "description": "Sort and order of the typeahead results, for example `relevance:desc`",
+        "default": "relevance:desc",
+        "mandatory": true
+      }
+    }
+  },
+  {
+    "type": "object",
+    "subtab": {
+      "id": "awaCommerceSearchTypesense",
+      "title": "Typesense",
+      "description": "Typesense configuration",
+      "group": "awaCommerceSearch"
+    },
+    "properties": {
+      "awaCommerce.search.typesense.enabled": {
+        "group": "awaCommerceSearch",
+        "subtab": "awaCommerceSearchTypesense",
+        "type": "boolean",
+        "title": "Enabled",
+        "description": "Enable typesense search"
+      },
+      "awaCommerce.search.typesense.apiKey": {
+        "group": "awaCommerceSearch",
+        "subtab": "awaCommerceSearchTypesense",
+        "type": "string",
+        "title": "API Key",
+        "description": "API Key for typesense"
+      },
+      "awaCommerce.search.typesense.multiSelectFacets": {
+        "group": "awaCommerceSearch",
+        "subtab": "awaCommerceSearchTypesense",
+        "type": "boolean",
+        "title": "Multi Select Facets",
+        "description": "Multi select facets for typesense"
+      },
+      "awaCommerce.search.typesense.node": {
+        "group": "awaCommerceSearch",
+        "subtab": "awaCommerceSearchTypesense",
+        "type": "string",
+        "title": "Typesense URL",
+        "description": "Typesense URL"
+      }
+    }
+  },
+  {
+    "type": "object",
+    "subtab": {
+      "id": "awaCommerceSocialLogin",
+      "title": "Social Login",
+      "group": "awaCommerceGeneral",
+      "description": "Adds social login functionality"
+    },
+    "properties": {
+      "awaCommerce.general.socialLogin.scriptId": {
+        "group": "awaCommerceGeneral",
+        "subtab": "awaCommerceSocialLogin",
+        "type": "string",
+        "title": "Script ID",
+        "default": "customscript_awalabs_social_login",
+        "mandatory": true,
+        "description": "Script ID of social login suitelet"
+      },
+      "awaCommerce.general.socialLogin.deployId": {
+        "group": "awaCommerceGeneral",
+        "subtab": "awaCommerceSocialLogin",
+        "type": "string",
+        "title": "Deploy ID",
+        "default": "customdeploy_awalabs_social_login",
+        "mandatory": true,
+        "description": "Deploy ID of social login suitelet"
+      },
+      "awaCommerce.general.socialLogin.googleClientId": {
+        "group": "awaCommerceGeneral",
+        "subtab": "awaCommerceSocialLogin",
+        "type": "string",
+        "title": "Google Client ID",
+        "default": "306947954095-j4evcb7jbgo0inm6r75johjgtfe9cqv6.apps.googleusercontent.com",
+        "description": "Google Client ID"
+      },
+      "awaCommerce.general.socialLogin.redirectUrl": {
+        "group": "awaCommerceGeneral",
+        "subtab": "awaCommerceSocialLogin",
+        "type": "string",
+        "title": "Redirect URL",
+        "description": "Redirect URL of social login suitelet",
+        "default": "https://www.awacommerce.com/ac/extensions/AwaLabs - AwaCommerce/SocialLogin/1.0.0/services/SocialLogin.Service.ss"
+      }
+    }
+  }
+]
