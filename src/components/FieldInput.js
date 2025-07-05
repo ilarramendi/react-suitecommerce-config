@@ -13,6 +13,20 @@ const FieldInput = ({ field, value, onChange, errors = [], compact = false }) =>
 		switch (field.type) {
 			case 'string':
 			case 'text':
+				// Check if this string field has enum options
+				if (field.enum && Array.isArray(field.enum) && field.enum.length > 0) {
+					return (
+						<Select value={value || ''} onValueChange={(value) => onChange(value)}>
+							<SelectTrigger className={`${hasError ? 'border-destructive' : ''} ${compact ? 'h-8' : ''}`}>
+								<SelectValue placeholder={compact ? field.title : 'Select an option'} />
+							</SelectTrigger>
+							<SelectContent>
+							
+							</SelectContent>
+						</Select>
+					);
+				}
+				// Otherwise render regular text input
 				return (
 					<Input
 						type="text"
