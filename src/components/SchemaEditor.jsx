@@ -1,15 +1,17 @@
-import React, { useState, useEffect, useRef } from 'react';
 import { Save, HelpCircle, AlertCircle } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+
 import { ConfigurationTool } from '../utils/ConfigurationTool';
-import FieldInput from './FieldInput';
+
 import ArrayEditor from './ArrayEditor';
+import FieldInput from './FieldInput';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from './ui/accordion';
+import { Alert, AlertDescription, AlertTitle } from './ui/alert';
+import { Badge } from './ui/badge';
 import { Button } from './ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
-import { Alert, AlertDescription, AlertTitle } from './ui/alert';
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from './ui/accordion';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
-import { Badge } from './ui/badge';
 import { Separator } from './ui/separator';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
 
 // Deep comparison function to check if configs are equal
 const deepEqual = (obj1, obj2) => {
@@ -150,15 +152,15 @@ const SchemaEditor = ({ manifest, configuration, onSave }) => {
 				<h1 className="text-3xl font-bold">SuiteCommerce Configuration</h1>
 				<div className="flex items-center space-x-3">
 					{hasValidationErrors && (
-						<Badge variant="destructive" className="flex items-center">
+						<Badge className="flex items-center" variant="destructive">
 							<AlertCircle className="w-4 h-4 mr-1" />
 							Validation Errors
 						</Badge>
 					)}
 					<Button
-						onClick={handleSave}
-						disabled={isSaving || !hasConfigChanged}
 						className="flex items-center"
+						disabled={isSaving || !hasConfigChanged}
+						onClick={handleSave}
 					>
 						{isSaving ? (
 							<div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />
@@ -178,7 +180,7 @@ const SchemaEditor = ({ manifest, configuration, onSave }) => {
 					<AlertDescription>
 						<ul className="list-disc list-inside space-y-1 mt-2">
 							{[...(validationErrors.schema || []), ...(validationErrors.references || [])].map((error, idx) => (
-								<li key={idx} className="text-sm">{error}</li>
+								<li className="text-sm" key={idx}>{error}</li>
 							))}
 						</ul>
 					</AlertDescription>
@@ -186,12 +188,12 @@ const SchemaEditor = ({ manifest, configuration, onSave }) => {
 			)}
 
 			{/* Configuration Form */}
-			<Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+			<Tabs className="w-full" value={activeTab} onValueChange={setActiveTab}>
 				<TabsList className="w-full justify-start">
 					{Object.keys(groups).map(groupId => {
 						const groupData = groups[groupId];
 						return (
-							<TabsTrigger key={groupId} value={groupId} className="flex items-center space-x-2">
+							<TabsTrigger className="flex items-center space-x-2" key={groupId} value={groupId}>
 								<span>{groupData.group?.title || 'General'}</span>
 								{groupData.group?.docRef && (
 									<HelpCircle className="w-4 h-4 text-muted-foreground" />
@@ -205,7 +207,7 @@ const SchemaEditor = ({ manifest, configuration, onSave }) => {
 					const groupData = groups[groupId];
 
 					return (
-						<TabsContent key={groupId} value={groupId} className="space-y-6 mt-6">
+						<TabsContent className="space-y-6 mt-6" key={groupId} value={groupId}>
 							<Card>
 								<CardContent className="p-6 space-y-6">
 									{/* Direct group properties */}
@@ -255,7 +257,7 @@ const SchemaEditor = ({ manifest, configuration, onSave }) => {
 															const currentValue = getPathValue(config, propId);
 
 															return (
-																<div key={propId} className="w-full">
+																<div className="w-full" key={propId}>
 																	<ArrayEditor
 																		field={fieldConfig}
 																		value={currentValue}
@@ -273,12 +275,12 @@ const SchemaEditor = ({ manifest, configuration, onSave }) => {
 									{Object.keys(groupData.subtabs).length > 0 && (
 										<>
 											{Object.keys(groupData.properties).length > 0 && <Separator />}
-											<Accordion type="single" collapsible className="space-y-4" defaultValue={Object.keys(groupData.subtabs)[0]}>
+											<Accordion collapsible className="space-y-4" defaultValue={Object.keys(groupData.subtabs)[0]} type="single">
 												{Object.keys(groupData.subtabs).map(subtabId => {
 													const subtabData = groupData.subtabs[subtabId];
 
 													return (
-														<AccordionItem key={subtabId} value={subtabId} className="border rounded-lg">
+														<AccordionItem className="border rounded-lg" key={subtabId} value={subtabId}>
 															<AccordionTrigger className="px-4 py-3 hover:bg-accent/30 transition-colors">
 																<div className="flex items-center space-x-2">
 																	<CardTitle className="text-lg font-medium">
@@ -332,7 +334,7 @@ const SchemaEditor = ({ manifest, configuration, onSave }) => {
 																					const currentValue = getPathValue(config, propId);
 
 																					return (
-																						<div key={propId} className="w-full">
+																						<div className="w-full" key={propId}>
 																							<ArrayEditor
 																								field={fieldConfig}
 																								value={currentValue}

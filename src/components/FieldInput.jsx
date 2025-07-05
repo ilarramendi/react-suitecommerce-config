@@ -1,10 +1,11 @@
-import React from 'react';
 import { HelpCircle, AlertCircle } from 'lucide-react';
-import { Input } from './ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
-import { Checkbox } from './ui/checkbox';
-import { Label } from './ui/label';
+import React from 'react';
+
 import { Alert, AlertDescription } from './ui/alert';
+import { Checkbox } from './ui/checkbox';
+import { Input } from './ui/input';
+import { Label } from './ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './ui/tooltip';
 
 const FieldInput = ({ field, value, onChange, errors = [], compact = false }) => {
@@ -34,11 +35,11 @@ const FieldInput = ({ field, value, onChange, errors = [], compact = false }) =>
 				// Otherwise render regular text input
 				return (
 					<Input
+						className={`${hasError ? 'border-destructive' : ''} ${compact ? 'h-8' : ''}`}
+						placeholder={compact ? field.title : field.description}
 						type="text"
 						value={value || ''}
 						onChange={(e) => onChange(e.target.value)}
-						placeholder={compact ? field.title : field.description}
-						className={`${hasError ? 'border-destructive' : ''} ${compact ? 'h-8' : ''}`}
 					/>
 				);
 
@@ -46,11 +47,11 @@ const FieldInput = ({ field, value, onChange, errors = [], compact = false }) =>
 			case 'number':
 				return (
 					<Input
+						className={`${hasError ? 'border-destructive' : ''} ${compact ? 'h-8' : ''}`}
+						placeholder={compact ? field.title : field.description}
 						type="number"
 						value={value || ''}
 						onChange={(e) => onChange(field.type === 'integer' ? parseInt(e.target.value) : parseFloat(e.target.value))}
-						placeholder={compact ? field.title : field.description}
-						className={`${hasError ? 'border-destructive' : ''} ${compact ? 'h-8' : ''}`}
 					/>
 				);
 
@@ -59,14 +60,14 @@ const FieldInput = ({ field, value, onChange, errors = [], compact = false }) =>
 				return (
 					<div className="flex items-center space-x-2">
 						<Checkbox
-							id={field.id}
 							checked={value || false}
+							id={field.id}
 							onCheckedChange={(checked) => onChange(checked)}
 						/>
 						{compact && (
 							<Label 
-								htmlFor={field.id} 
-								className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+								className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70" 
+								htmlFor={field.id}
 							>
 								{field.title}
 							</Label>
@@ -94,11 +95,11 @@ const FieldInput = ({ field, value, onChange, errors = [], compact = false }) =>
 			default:
 				return (
 					<Input
+						className={`${hasError ? 'border-destructive' : ''} ${compact ? 'h-8' : ''}`}
+						placeholder={compact ? field.title : field.description}
 						type="text"
 						value={value || ''}
 						onChange={(e) => onChange(e.target.value)}
-						placeholder={compact ? field.title : field.description}
-						className={`${hasError ? 'border-destructive' : ''} ${compact ? 'h-8' : ''}`}
 					/>
 				);
 		}
@@ -110,7 +111,7 @@ const FieldInput = ({ field, value, onChange, errors = [], compact = false }) =>
 			<div className="space-y-1">
 				{renderField()}
 				{errors.map((error, idx) => (
-					<Alert key={idx} variant="destructive" className="py-1">
+					<Alert className="py-1" key={idx} variant="destructive">
 						<AlertCircle className="h-3 w-3" />
 						<AlertDescription className="text-xs">
 							{error}
@@ -147,7 +148,7 @@ const FieldInput = ({ field, value, onChange, errors = [], compact = false }) =>
 				{(field.type === 'boolean' || field.type === 'checkbox') && renderField()}
 
 				{errors.map((error, idx) => (
-					<Alert key={idx} variant="destructive" className="py-2">
+					<Alert className="py-2" key={idx} variant="destructive">
 						<AlertCircle className="h-4 w-4" />
 						<AlertDescription className="text-xs">
 							{error}

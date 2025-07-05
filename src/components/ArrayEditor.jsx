@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
 import { Plus, Trash2, AlertCircle, HelpCircle, X } from 'lucide-react';
+import React, { useState } from 'react';
+
 import FieldInput from './FieldInput';
+import { Alert, AlertDescription } from './ui/alert';
 import { Button } from './ui/button';
 import { Card, CardContent } from './ui/card';
 import { Label } from './ui/label';
-import { Alert, AlertDescription } from './ui/alert';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './ui/table';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './ui/tooltip';
 
@@ -75,10 +76,10 @@ const ArrayEditor = ({ field, value = [], onChange, errors = [] }) => {
 					{field.mandatory && <span className="text-destructive ml-1">*</span>}
 				</Label>
 				<Button
-					variant="outline"
-					size="sm"
-					onClick={addItem}
 					className="flex items-center"
+					size="sm"
+					variant="outline"
+					onClick={addItem}
 				>
 					<Plus className="w-4 h-4 mr-1" />
 					Add
@@ -99,18 +100,18 @@ const ArrayEditor = ({ field, value = [], onChange, errors = [] }) => {
 						<div className="flex flex-wrap gap-2">
 							{value.map((item, index) => (
 								<div
-									key={index}
 									className="group relative inline-flex items-center bg-secondary/60 hover:bg-secondary/80 border rounded-full px-3 py-1.5 text-sm transition-colors"
+									key={index}
 								>
 									{editingIndex === index ? (
 										<input
+											autoFocus
+											className="bg-transparent border-none outline-none min-w-[60px] max-w-[200px] text-sm"
 											type="text"
 											value={editingValue}
-											onChange={(e) => setEditingValue(e.target.value)}
 											onBlur={finishEditing}
+											onChange={(e) => setEditingValue(e.target.value)}
 											onKeyDown={handleKeyDown}
-											className="bg-transparent border-none outline-none min-w-[60px] max-w-[200px] text-sm"
-											autoFocus
 										/>
 									) : (
 										<span
@@ -121,8 +122,8 @@ const ArrayEditor = ({ field, value = [], onChange, errors = [] }) => {
 										</span>
 									)}
 									<button
-										onClick={() => removeItem(index)}
 										className="ml-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 text-muted-foreground hover:text-destructive"
+										onClick={() => removeItem(index)}
 									>
 										<X className="w-3 h-3" />
 									</button>
@@ -134,7 +135,7 @@ const ArrayEditor = ({ field, value = [], onChange, errors = [] }) => {
 			</Card>
 
 			{errors.map((error, idx) => (
-				<Alert key={idx} variant="destructive" className="py-2">
+				<Alert className="py-2" key={idx} variant="destructive">
 					<AlertCircle className="h-4 w-4" />
 					<AlertDescription className="text-xs">
 						{error}
@@ -153,10 +154,10 @@ const ArrayEditor = ({ field, value = [], onChange, errors = [] }) => {
 					{field.mandatory && <span className="text-destructive ml-1">*</span>}
 				</Label>
 				<Button
-					variant="outline"
-					size="sm"
-					onClick={addItem}
 					className="flex items-center"
+					size="sm"
+					variant="outline"
+					onClick={addItem}
 				>
 					<Plus className="w-4 h-4 mr-1" />
 					Add
@@ -176,7 +177,7 @@ const ArrayEditor = ({ field, value = [], onChange, errors = [] }) => {
 									{properties.map(propKey => {
 										const property = field.items.properties[propKey];
 										return (
-											<TableHead key={propKey} className="min-w-[150px]">
+											<TableHead className="min-w-[150px]" key={propKey}>
 												<div className="flex items-center space-x-1">
 													<span>{property.title || propKey}</span>
 													{property.mandatory && <span className="text-destructive">*</span>}
@@ -202,7 +203,7 @@ const ArrayEditor = ({ field, value = [], onChange, errors = [] }) => {
 							<TableBody>
 								{value.length === 0 ? (
 									<TableRow>
-										<TableCell colSpan={properties.length + 1} className="text-center py-8 text-muted-foreground">
+										<TableCell className="text-center py-8 text-muted-foreground" colSpan={properties.length + 1}>
 											No items added yet. Click "Add" to create your first item.
 										</TableCell>
 									</TableRow>
@@ -212,22 +213,22 @@ const ArrayEditor = ({ field, value = [], onChange, errors = [] }) => {
 											{properties.map(propKey => {
 												const property = field.items.properties[propKey];
 												return (
-													<TableCell key={propKey} className="p-2">
+													<TableCell className="p-2" key={propKey}>
 														<FieldInput
+															compact
 															field={{ ...property, title: property.title || propKey }}
 															value={item[propKey]}
 															onChange={(val) => updateItemProperty(index, propKey, val)}
-															compact
 														/>
 													</TableCell>
 												);
 											})}
 											<TableCell className="p-2">
 												<Button
-													variant="destructive"
-													size="sm"
-													onClick={() => removeItem(index)}
 													className="flex items-center"
+													size="sm"
+													variant="destructive"
+													onClick={() => removeItem(index)}
 												>
 													<Trash2 className="w-4 h-4" />
 												</Button>
@@ -242,7 +243,7 @@ const ArrayEditor = ({ field, value = [], onChange, errors = [] }) => {
 			</TooltipProvider>
 
 			{errors.map((error, idx) => (
-				<Alert key={idx} variant="destructive" className="py-2">
+				<Alert className="py-2" key={idx} variant="destructive">
 					<AlertCircle className="h-4 w-4" />
 					<AlertDescription className="text-xs">
 						{error}

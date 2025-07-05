@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
-import { mockWebsites } from './data/mockData';
-import mockExistingConfig from './data/config.json';
-import baseManifest from './data/manifest.json';
-import extraManifest from './data/extra-manifest.json';
-import Header from './components/Header';
+
 import Footer from './components/Footer';
-import WebsiteSelector from './components/WebsiteSelector';
+import Header from './components/Header';
 import SchemaEditor from './components/SchemaEditor';
 import { Toaster } from './components/ui/toaster';
+import WebsiteSelector from './components/WebsiteSelector';
+import mockExistingConfig from './data/config.json';
+import extraManifest from './data/extra-manifest.json';
+import baseManifest from './data/manifest.json';
+import { mockWebsites } from './data/mockData';
 
 
 const mockManifest = [
@@ -63,8 +64,8 @@ const SuiteCommerceConfigApp = () => {
 					/>
 				) : (
 					<SchemaEditor
-						manifest={mockManifest}
 						configuration={configuration}
+						manifest={mockManifest}
 						onSave={handleSave}
 					/>
 				)}

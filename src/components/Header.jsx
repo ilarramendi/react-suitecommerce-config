@@ -1,6 +1,8 @@
 import React, { useEffect } from 'react';
-import { Button } from './ui/button';
+
 import { useToast } from '../hooks/use-toast';
+
+import { Button } from './ui/button';
 
 const Header = ({ currentView, saveStatus, onBack }) => {
 	const { toast } = useToast();
@@ -28,9 +30,9 @@ const Header = ({ currentView, saveStatus, onBack }) => {
 					{currentView === 'editor' && (
 						<div className="flex items-center space-x-4">
 							<Button
+								className="px-4 py-2"
 								variant="secondary"
 								onClick={onBack}
-								className="px-4 py-2"
 							>
 								Back to Selection
 							</Button>

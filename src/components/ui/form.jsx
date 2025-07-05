@@ -1,9 +1,9 @@
-import * as React from "react"
 import { Slot } from "@radix-ui/react-slot"
+import * as React from "react"
 import { Controller, FormProvider, useFormContext } from "react-hook-form";
 
-import { cn } from "src/lib/utils"
-import { Label } from "src/components/ui/label"
+import { cn } from "../../lib/utils"
+import { Label } from "../ui/label"
 
 const Form = FormProvider
 
@@ -51,7 +51,7 @@ const FormItem = React.forwardRef(({ className, ...props }, ref) => {
 
   return (
     <FormItemContext.Provider value={{ id }}>
-      <div ref={ref} className={cn("space-y-2", className)} {...props} />
+      <div className={cn("space-y-2", className)} ref={ref} {...props} />
     </FormItemContext.Provider>
   );
 })
@@ -62,9 +62,9 @@ const FormLabel = React.forwardRef(({ className, ...props }, ref) => {
 
   return (
     <Label
-      ref={ref}
       className={cn(error && "text-destructive", className)}
       htmlFor={formItemId}
+      ref={ref}
       {...props} />
   );
 })
@@ -75,14 +75,14 @@ const FormControl = React.forwardRef(({ ...props }, ref) => {
 
   return (
     <Slot
-      ref={ref}
-      id={formItemId}
       aria-describedby={
         !error
           ? `${formDescriptionId}`
           : `${formDescriptionId} ${formMessageId}`
       }
       aria-invalid={!!error}
+      id={formItemId}
+      ref={ref}
       {...props} />
   );
 })
@@ -93,9 +93,9 @@ const FormDescription = React.forwardRef(({ className, ...props }, ref) => {
 
   return (
     <p
-      ref={ref}
-      id={formDescriptionId}
       className={cn("text-sm text-muted-foreground", className)}
+      id={formDescriptionId}
+      ref={ref}
       {...props} />
   );
 })
@@ -111,9 +111,9 @@ const FormMessage = React.forwardRef(({ className, children, ...props }, ref) =>
 
   return (
     <p
-      ref={ref}
-      id={formMessageId}
       className={cn("text-sm font-medium text-destructive", className)}
+      id={formMessageId}
+      ref={ref}
       {...props}>
       {body}
     </p>

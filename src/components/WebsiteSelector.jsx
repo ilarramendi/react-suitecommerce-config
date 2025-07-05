@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react';
 import { Copy } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
+import React, { useState, useEffect } from 'react';
+
 import { Button } from './ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Label } from './ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 
 const WebsiteSelector = ({ websites, onSelect }) => {
 	const [selectedWebsite, setSelectedWebsite] = useState('');
@@ -35,7 +36,7 @@ const WebsiteSelector = ({ websites, onSelect }) => {
 				<CardContent className="space-y-6">
 					<div className="space-y-4">
 						<div>
-							<Label htmlFor="website-select" className="text-sm font-medium mb-2 block">
+							<Label className="text-sm font-medium mb-2 block" htmlFor="website-select">
 								Select Website
 							</Label>
 							<Select value={selectedWebsite} onValueChange={setSelectedWebsite}>
@@ -54,7 +55,7 @@ const WebsiteSelector = ({ websites, onSelect }) => {
 
 						{selectedWebsite && (
 							<div>
-								<Label htmlFor="domain-select" className="text-sm font-medium mb-2 block">
+								<Label className="text-sm font-medium mb-2 block" htmlFor="domain-select">
 									Select Domain
 								</Label>
 								<Select value={selectedDomain} onValueChange={setSelectedDomain}>
@@ -75,14 +76,14 @@ const WebsiteSelector = ({ websites, onSelect }) => {
 
 					<div className="flex space-x-4">
 						<Button
-							onClick={handleConfigure}
-							disabled={!selectedWebsite || !selectedDomain}
 							className="flex-1"
+							disabled={!selectedWebsite || !selectedDomain}
+							onClick={handleConfigure}
 						>
 							Configure
 						</Button>
 
-						<Button variant="secondary" className="flex items-center">
+						<Button className="flex items-center" variant="secondary">
 							<Copy className="w-4 h-4 mr-2" />
 							Copy Configuration
 						</Button>
