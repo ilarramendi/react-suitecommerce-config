@@ -54,37 +54,58 @@ const SchemaEditor = ({ manifest, configuration, onSave }) => {
 		}
 	};
 
-	// Group manifest entries by group and subtab
-	const groupedManifest = manifest.reduce((acc, entry) => {
-		const groupId = entry.group?.id || 'ungrouped';
-		if (!acc[groupId]) {
-			acc[groupId] = { group: entry.group, subtabs: {}, properties: {} };
+	const groups = {};
+	for (const entry of manifest) {
+		if (entry.group) {
+			groups[entry.group.id] = {
+				group: entry.group,
+				subtabs: {},
+				properties: {}
+			};
 		}
-
-		Object.keys(entry.properties || {}).forEach(propId => {
-			const property = entry.properties[propId];
-			if (property.subtab) {
-				const subtabId = property.subtab;
-				if (!acc[groupId].subtabs[subtabId]) {
-					acc[groupId].subtabs[subtabId] = { subtab: entry.subtab, properties: {} };
-				}
-				acc[groupId].subtabs[subtabId].properties[propId] = property;
-			} else {
-				acc[groupId].properties[propId] = property;
+	}
+	for (const entry of manifest) {
+		if (entry.subtab) {
+			if (!groups[entry.subtab.group]) {
+				console.error(`Subtab ${entry.subtab.id} not found in group ${entry.subtab.group}`);
+				continue;
 			}
-		});
+			groups[entry.subtab.group].subtabs[entry.subtab.id] = {
+				subtab: entry.subtab,
+				properties: {}
+			};
+		}
+	}
+	for (const entry of manifest) {
+		if (entry.properties) {
+			for (const propId of Object.keys(entry.properties)) {
+				const prop = entry.properties[propId];
+				if (!groups[prop.group]) {
+					console.error(`Manifest entry ${propId} not found in group ${prop.group}`);
+					continue;
+				}
+				if (prop.subtab) {
+					if (!groups[prop.group].subtabs[prop.subtab]) {
+						console.error(`Subtab ${prop.subtab} not found in group ${prop.group}`);
+						continue;
+					}
+					groups[prop.group].subtabs[prop.subtab].properties[propId] = prop;
+				} else {
+					groups[prop.group].properties[propId] = prop;
+				}
+			}
+		}
+	}
 
-		return acc;
-	}, {});
 
 	const hasValidationErrors = validationErrors.schema?.length > 0 || validationErrors.references?.length > 0;
 
 	// Set initial active tab
 	useEffect(() => {
-		if (!activeTab && Object.keys(groupedManifest).length > 0) {
-			setActiveTab(Object.keys(groupedManifest)[0]);
+		if (!activeTab && Object.keys(groups).length > 0) {
+			setActiveTab(Object.keys(groups)[0]);
 		}
-	}, [groupedManifest, activeTab]);
+	}, [groups, activeTab]);
 
 	return (
 		<div className="max-w-6xl mx-auto p-6 space-y-6">
@@ -130,8 +151,8 @@ const SchemaEditor = ({ manifest, configuration, onSave }) => {
 			{/* Configuration Form */}
 			<Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
 				<TabsList className="w-full justify-start">
-					{Object.keys(groupedManifest).map(groupId => {
-						const groupData = groupedManifest[groupId];
+					{Object.keys(groups).map(groupId => {
+						const groupData = groups[groupId];
 						return (
 							<TabsTrigger key={groupId} value={groupId} className="flex items-center space-x-2">
 								<span>{groupData.group?.title || 'General'}</span>
@@ -143,8 +164,8 @@ const SchemaEditor = ({ manifest, configuration, onSave }) => {
 					})}
 				</TabsList>
 
-				{Object.keys(groupedManifest).map(groupId => {
-					const groupData = groupedManifest[groupId];
+				{Object.keys(groups).map(groupId => {
+					const groupData = groups[groupId];
 
 					return (
 						<TabsContent key={groupId} value={groupId} className="space-y-6 mt-6">
