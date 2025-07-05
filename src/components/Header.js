@@ -1,9 +1,20 @@
-import React from 'react';
-import { CheckCircle } from 'lucide-react';
+import React, { useEffect } from 'react';
 import { Button } from './ui/button';
-import { Alert, AlertDescription } from './ui/alert';
+import { useToast } from '../hooks/use-toast';
 
 const Header = ({ currentView, saveStatus, onBack }) => {
+	const { toast } = useToast();
+
+	useEffect(() => {
+		if (saveStatus === 'success') {
+			toast({
+				title: "Success",
+				description: "Configuration saved successfully",
+				duration: 3000,
+			});
+		}
+	}, [saveStatus, toast]);
+
 	return (
 		<header className="bg-white shadow-sm border-b">
 			<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -16,14 +27,6 @@ const Header = ({ currentView, saveStatus, onBack }) => {
 
 					{currentView === 'editor' && (
 						<div className="flex items-center space-x-4">
-							{saveStatus === 'success' && (
-								<Alert className="w-auto border-green-200 bg-green-50 px-3 py-2">
-									<CheckCircle className="h-4 w-4 text-green-600" />
-									<AlertDescription className="text-green-800 font-medium">
-										Configuration saved successfully
-									</AlertDescription>
-								</Alert>
-							)}
 							<Button
 								variant="secondary"
 								onClick={onBack}

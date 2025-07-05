@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Save, HelpCircle, AlertCircle } from 'lucide-react';
 import { ConfigurationTool } from '../utils/ConfigurationTool';
 import FieldInput from './FieldInput';
@@ -11,49 +11,43 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
 import { Badge } from './ui/badge';
 import { Separator } from './ui/separator';
 
-const SchemaEditor = ({ manifest, configuration, onSave }) => {
-	const [config, setConfig] = useState(configuration || {});
-	const [validationErrors, setValidationErrors] = useState({});
-	const [isSaving, setIsSaving] = useState(false);
-	const [activeTab, setActiveTab] = useState('');
+// Deep comparison function to check if configs are equal
+const deepEqual = (obj1, obj2) => {
+	if (obj1 === obj2) return true;
+	
+	if (obj1 == null || obj2 == null) return obj1 === obj2;
+	
+	if (typeof obj1 !== 'object' || typeof obj2 !== 'object') return obj1 === obj2;
+	
+	const keys1 = Object.keys(obj1);
+	const keys2 = Object.keys(obj2);
+	
+	if (keys1.length !== keys2.length) return false;
+	
+	for (let key of keys1) {
+		if (!keys2.includes(key)) return false;
+		if (!deepEqual(obj1[key], obj2[key])) return false;
+	}
+	
+	return true;
+};
 
-	const configTool = new ConfigurationTool();
+const getPathValue = (obj, path) => {
+	return path.split('.').reduce((current, key) => current?.[key], obj);
+};
 
-	useEffect(() => {
-		// Validate configuration on mount and changes
-		const errors = configTool.validateJSONSchema(config);
-		const refErrors = configTool.validateReferences(manifest);
-		setValidationErrors({ schema: errors, references: refErrors });
-	}, [config, manifest]);
+const setPathValue = (obj, path, value) => {
+	const keys = path.split('.');
+	const lastKey = keys.pop();
+	const target = keys.reduce((current, key) => {
+		if (!current[key]) current[key] = {};
+		return current[key];
+	}, obj);
+	target[lastKey] = value;
+	return { ...obj };
+};
 
-	const getPathValue = (obj, path) => {
-		return path.split('.').reduce((current, key) => current?.[key], obj);
-	};
-
-	const setPathValue = (obj, path, value) => {
-		const keys = path.split('.');
-		const lastKey = keys.pop();
-		const target = keys.reduce((current, key) => {
-			if (!current[key]) current[key] = {};
-			return current[key];
-		}, obj);
-		target[lastKey] = value;
-		return { ...obj };
-	};
-
-	const handleFieldChange = (fieldId, value) => {
-		setConfig(prev => setPathValue(prev, fieldId, value));
-	};
-
-	const handleSave = async () => {
-		setIsSaving(true);
-		try {
-			await onSave(config);
-		} finally {
-			setIsSaving(false);
-		}
-	};
-
+const buildGroups = (manifest) => {
 	const groups = {};
 	for (const entry of manifest) {
 		if (entry.group) {
@@ -97,7 +91,50 @@ const SchemaEditor = ({ manifest, configuration, onSave }) => {
 		}
 	}
 
+	return groups;
+}
 
+const SchemaEditor = ({ manifest, configuration, onSave }) => {
+	const [config, setConfig] = useState(configuration || {});
+	const [validationErrors, setValidationErrors] = useState({});
+	const [isSaving, setIsSaving] = useState(false);
+	const [activeTab, setActiveTab] = useState('');
+	const initialConfig = useRef(configuration || {});
+
+	const configTool = new ConfigurationTool();
+
+	const hasConfigChanged = !deepEqual(config, initialConfig.current);
+
+	useEffect(() => {
+		// Update initial config when configuration prop changes
+		initialConfig.current = configuration || {};
+		setConfig(configuration || {});
+	}, [configuration]);
+
+	useEffect(() => {
+		// Validate configuration on mount and changes
+		const errors = configTool.validateJSONSchema(config);
+		const refErrors = configTool.validateReferences(manifest);
+		setValidationErrors({ schema: errors, references: refErrors });
+	}, [config, manifest]);
+
+	const handleFieldChange = (fieldId, value) => {
+		setConfig(prev => setPathValue(prev, fieldId, value));
+	};
+
+	const handleSave = async () => {
+		setIsSaving(true);
+		try {
+			await onSave(config);
+			// Reset initial config after successful save
+			initialConfig.current = { ...config };
+		} finally {
+			setIsSaving(false);
+		}
+	};
+
+
+	const groups = buildGroups(manifest);
 	const hasValidationErrors = validationErrors.schema?.length > 0 || validationErrors.references?.length > 0;
 
 	// Set initial active tab
@@ -120,7 +157,7 @@ const SchemaEditor = ({ manifest, configuration, onSave }) => {
 					)}
 					<Button
 						onClick={handleSave}
-						disabled={isSaving}
+						disabled={isSaving || !hasConfigChanged}
 						className="flex items-center"
 					>
 						{isSaving ? (
@@ -128,7 +165,7 @@ const SchemaEditor = ({ manifest, configuration, onSave }) => {
 						) : (
 							<Save className="w-4 h-4 mr-2" />
 						)}
-						{isSaving ? 'Saving...' : 'Save Configuration'}
+						{isSaving ? 'Saving...' : hasConfigChanged ? 'Save Configuration' : 'No Changes'}
 					</Button>
 				</div>
 			</div>

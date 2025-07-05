@@ -7,6 +7,7 @@ import Header from './components/Header';
 import Footer from './components/Footer';
 import WebsiteSelector from './components/WebsiteSelector';
 import SchemaEditor from './components/SchemaEditor';
+import { Toaster } from './components/ui/toaster';
 
 
 const mockManifest = [
@@ -70,6 +71,7 @@ const SuiteCommerceConfigApp = () => {
 			</main>
 
 			<Footer />
+			<Toaster />
 		</div>
 	);
 };
