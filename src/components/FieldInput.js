@@ -22,7 +22,11 @@ const FieldInput = ({ field, value, onChange, errors = [], compact = false }) =>
 								<SelectValue placeholder={compact ? field.title : 'Select an option'} />
 							</SelectTrigger>
 							<SelectContent>
-							
+								{field.enum.map((option, idx) => (
+									<SelectItem key={idx} value={option || idx}>
+										{option}
+									</SelectItem>
+								))}
 							</SelectContent>
 						</Select>
 					);
