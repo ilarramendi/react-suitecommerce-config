@@ -152,35 +152,62 @@ const SchemaEditor = ({ manifest, configuration, onSave }) => {
 								<CardContent className="p-6 space-y-6">
 									{/* Direct group properties */}
 									{Object.keys(groupData.properties).length > 0 && (
-										<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-											{Object.keys(groupData.properties).map(propId => {
-												const property = groupData.properties[propId];
-												const fieldConfig = {
-													...property,
-													id: propId,
-													title: property.title || propId
-												};
+										<div className="space-y-6">
+											{/* Normal properties in 2-column grid */}
+											{Object.keys(groupData.properties).filter(propId => groupData.properties[propId].type !== 'array').length > 0 && (
+												<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+													{Object.keys(groupData.properties)
+														.filter(propId => groupData.properties[propId].type !== 'array')
+														.map(propId => {
+															const property = groupData.properties[propId];
+															const fieldConfig = {
+																...property,
+																id: propId,
+																title: property.title || propId
+															};
 
-												const currentValue = getPathValue(config, propId);
+															const currentValue = getPathValue(config, propId);
 
-												return (
-													<div key={propId}>
-														{property.type === 'array' ? (
-															<ArrayEditor
-																field={fieldConfig}
-																value={currentValue}
-																onChange={(value) => handleFieldChange(propId, value)}
-															/>
-														) : (
-															<FieldInput
-																field={fieldConfig}
-																value={currentValue}
-																onChange={(value) => handleFieldChange(propId, value)}
-															/>
-														)}
-													</div>
-												);
-											})}
+															return (
+																<div key={propId}>
+																	<FieldInput
+																		field={fieldConfig}
+																		value={currentValue}
+																		onChange={(value) => handleFieldChange(propId, value)}
+																	/>
+																</div>
+															);
+														})}
+												</div>
+											)}
+
+											{/* Array properties - each takes full row */}
+											{Object.keys(groupData.properties).filter(propId => groupData.properties[propId].type === 'array').length > 0 && (
+												<div className="space-y-6">
+													{Object.keys(groupData.properties)
+														.filter(propId => groupData.properties[propId].type === 'array')
+														.map(propId => {
+															const property = groupData.properties[propId];
+															const fieldConfig = {
+																...property,
+																id: propId,
+																title: property.title || propId
+															};
+
+															const currentValue = getPathValue(config, propId);
+
+															return (
+																<div key={propId} className="w-full">
+																	<ArrayEditor
+																		field={fieldConfig}
+																		value={currentValue}
+																		onChange={(value) => handleFieldChange(propId, value)}
+																	/>
+																</div>
+															);
+														})}
+												</div>
+											)}
 										</div>
 									)}
 
@@ -188,7 +215,7 @@ const SchemaEditor = ({ manifest, configuration, onSave }) => {
 									{Object.keys(groupData.subtabs).length > 0 && (
 										<>
 											{Object.keys(groupData.properties).length > 0 && <Separator />}
-											<Accordion type="single" collapsible className="space-y-4">
+											<Accordion type="single" collapsible className="space-y-4" defaultValue={Object.keys(groupData.subtabs)[0]}>
 												{Object.keys(groupData.subtabs).map(subtabId => {
 													const subtabData = groupData.subtabs[subtabId];
 
@@ -202,35 +229,62 @@ const SchemaEditor = ({ manifest, configuration, onSave }) => {
 																</div>
 															</AccordionTrigger>
 															<AccordionContent className="px-4 pb-4">
-																<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-																	{Object.keys(subtabData.properties).map(propId => {
-																		const property = subtabData.properties[propId];
-																		const fieldConfig = {
-																			...property,
-																			id: propId,
-																			title: property.title || propId
-																		};
+																<div className="space-y-6">
+																	{/* Normal properties in 2-column grid */}
+																	{Object.keys(subtabData.properties).filter(propId => subtabData.properties[propId].type !== 'array').length > 0 && (
+																		<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+																			{Object.keys(subtabData.properties)
+																				.filter(propId => subtabData.properties[propId].type !== 'array')
+																				.map(propId => {
+																					const property = subtabData.properties[propId];
+																					const fieldConfig = {
+																						...property,
+																						id: propId,
+																						title: property.title || propId
+																					};
 
-																		const currentValue = getPathValue(config, propId);
+																					const currentValue = getPathValue(config, propId);
 
-																		return (
-																			<div key={propId}>
-																				{property.type === 'array' ? (
-																					<ArrayEditor
-																						field={fieldConfig}
-																						value={currentValue}
-																						onChange={(value) => handleFieldChange(propId, value)}
-																					/>
-																				) : (
-																					<FieldInput
-																						field={fieldConfig}
-																						value={currentValue}
-																						onChange={(value) => handleFieldChange(propId, value)}
-																					/>
-																				)}
-																			</div>
-																		);
-																	})}
+																					return (
+																						<div key={propId}>
+																							<FieldInput
+																								field={fieldConfig}
+																								value={currentValue}
+																								onChange={(value) => handleFieldChange(propId, value)}
+																							/>
+																						</div>
+																					);
+																				})}
+																		</div>
+																	)}
+
+																	{/* Array properties - each takes full row */}
+																	{Object.keys(subtabData.properties).filter(propId => subtabData.properties[propId].type === 'array').length > 0 && (
+																		<div className="space-y-6">
+																			{Object.keys(subtabData.properties)
+																				.filter(propId => subtabData.properties[propId].type === 'array')
+																				.map(propId => {
+																					const property = subtabData.properties[propId];
+																					const fieldConfig = {
+																						...property,
+																						id: propId,
+																						title: property.title || propId
+																					};
+
+																					const currentValue = getPathValue(config, propId);
+
+																					return (
+																						<div key={propId} className="w-full">
+																							<ArrayEditor
+																								field={fieldConfig}
+																								value={currentValue}
+																								onChange={(value) => handleFieldChange(propId, value)}
+																							/>
+																						</div>
+																					);
+																				})}
+																		</div>
+																	)}
 																</div>
 															</AccordionContent>
 														</AccordionItem>

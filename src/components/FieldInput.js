@@ -5,6 +5,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '.
 import { Checkbox } from './ui/checkbox';
 import { Label } from './ui/label';
 import { Alert, AlertDescription } from './ui/alert';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './ui/tooltip';
 
 const FieldInput = ({ field, value, onChange, errors = [], compact = false }) => {
 	const hasError = errors.length > 0;
@@ -58,7 +59,7 @@ const FieldInput = ({ field, value, onChange, errors = [], compact = false }) =>
 							checked={value || false}
 							onCheckedChange={(checked) => onChange(checked)}
 						/>
-						{!compact && (
+						{compact && (
 							<Label 
 								htmlFor={field.id} 
 								className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
@@ -117,36 +118,40 @@ const FieldInput = ({ field, value, onChange, errors = [], compact = false }) =>
 	}
 
 	return (
-		<div className="space-y-2">
-			<div className="flex items-center space-x-2">
-				<Label className="text-sm font-medium">
-					{field.title}
-					{field.mandatory && <span className="text-destructive ml-1">*</span>}
-				</Label>
-				{field.docRef && (
-					<HelpCircle
-						className="w-4 h-4 text-muted-foreground cursor-help"
-						title="Click for help documentation"
-					/>
-				)}
+		<TooltipProvider>
+			<div className="space-y-2">
+				<div className="flex items-center space-x-2">
+					<Label className="text-sm font-medium">
+						{field.title}
+						{field.mandatory && <span className="text-destructive ml-1">*</span>}
+					</Label>
+					{(field.description || field.docRef) && (
+						<Tooltip>
+							<TooltipTrigger asChild>
+								<HelpCircle className="w-4 h-4 text-muted-foreground cursor-help" />
+							</TooltipTrigger>
+							<TooltipContent>
+								<div className="max-w-xs text-sm">
+									{field.description || 'Click for help documentation'}
+								</div>
+							</TooltipContent>
+						</Tooltip>
+					)}
+				</div>
+
+				{field.type !== 'boolean' && field.type !== 'checkbox' && renderField()}
+				{(field.type === 'boolean' || field.type === 'checkbox') && renderField()}
+
+				{errors.map((error, idx) => (
+					<Alert key={idx} variant="destructive" className="py-2">
+						<AlertCircle className="h-4 w-4" />
+						<AlertDescription className="text-xs">
+							{error}
+						</AlertDescription>
+					</Alert>
+				))}
 			</div>
-
-			{field.type !== 'boolean' && field.type !== 'checkbox' && renderField()}
-			{(field.type === 'boolean' || field.type === 'checkbox') && renderField()}
-
-			{field.description && (
-				<p className="text-xs text-muted-foreground">{field.description}</p>
-			)}
-
-			{errors.map((error, idx) => (
-				<Alert key={idx} variant="destructive" className="py-2">
-					<AlertCircle className="h-4 w-4" />
-					<AlertDescription className="text-xs">
-						{error}
-					</AlertDescription>
-				</Alert>
-			))}
-		</div>
+		</TooltipProvider>
 	);
 };
 
