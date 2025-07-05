@@ -22,6 +22,7 @@ export class ConfigurationTool {
 		const subtabs = {};
 		const properties = {};
 
+		// First pass: collect all groups and subtabs
 		manifest.forEach(entry => {
 			if (entry.group) {
 				if (groups[entry.group.id]) {
@@ -36,7 +37,10 @@ export class ConfigurationTool {
 				}
 				subtabs[entry.subtab.id] = entry.subtab;
 			}
+		});
 
+		// Second pass: validate property references
+		manifest.forEach(entry => {
 			Object.keys(entry.properties || {}).forEach(propId => {
 				const property = entry.properties[propId];
 
@@ -46,10 +50,12 @@ export class ConfigurationTool {
 				properties[propId] = true;
 
 				if (property.group && !groups[property.group]) {
+					console.log(`Property ${propId} references group ${property.group}, available groups:`, Object.keys(groups));
 					errors.push(`Property ${propId} references non-existent group ${property.group}`);
 				}
 
 				if (property.subtab && !subtabs[property.subtab]) {
+					console.log(`Property ${propId} references subtab ${property.subtab}, available subtabs:`, Object.keys(subtabs));
 					errors.push(`Property ${propId} references non-existent subtab ${property.subtab}`);
 				}
 			});

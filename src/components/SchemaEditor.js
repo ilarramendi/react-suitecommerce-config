@@ -7,12 +7,12 @@ import { Button } from './ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Alert, AlertDescription, AlertTitle } from './ui/alert';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from './ui/collapsible';
+import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from './ui/accordion';
 import { Badge } from './ui/badge';
 import { Separator } from './ui/separator';
 
 const SchemaEditor = ({ manifest, configuration, onSave }) => {
 	const [config, setConfig] = useState(configuration || {});
-	const [expandedGroups, setExpandedGroups] = useState({});
 	const [expandedSubtabs, setExpandedSubtabs] = useState({});
 	const [validationErrors, setValidationErrors] = useState({});
 	const [isSaving, setIsSaving] = useState(false);
@@ -43,10 +43,6 @@ const SchemaEditor = ({ manifest, configuration, onSave }) => {
 
 	const handleFieldChange = (fieldId, value) => {
 		setConfig(prev => setPathValue(prev, fieldId, value));
-	};
-
-	const toggleGroup = (groupId) => {
-		setExpandedGroups(prev => ({ ...prev, [groupId]: !prev[groupId] }));
 	};
 
 	const toggleSubtab = (subtabId) => {
@@ -129,145 +125,135 @@ const SchemaEditor = ({ manifest, configuration, onSave }) => {
 			)}
 
 			{/* Configuration Form */}
-			<div className="space-y-6">
+			<Accordion type="single" collapsible className="space-y-4">
 				{Object.keys(groupedManifest).map(groupId => {
 					const groupData = groupedManifest[groupId];
-					const isExpanded = expandedGroups[groupId] ?? true;
 
 					return (
-						<Card key={groupId} className="shadow-sm">
-							<Collapsible open={isExpanded} onOpenChange={() => toggleGroup(groupId)}>
-								<CollapsibleTrigger asChild>
-									<CardHeader className="cursor-pointer hover:bg-accent/50 transition-colors">
-										<div className="flex items-center justify-between">
-											<div className="flex items-center space-x-2">
-												{isExpanded ? (
-													<ChevronDown className="w-5 h-5 text-muted-foreground" />
-												) : (
-													<ChevronRight className="w-5 h-5 text-muted-foreground" />
-												)}
-												<CardTitle className="text-xl">
-													{groupData.group?.title || 'General'}
-												</CardTitle>
-											</div>
-											{groupData.group?.docRef && (
-												<HelpCircle className="w-5 h-5 text-muted-foreground" />
-											)}
+						<AccordionItem key={groupId} value={groupId} className="border rounded-lg shadow-sm">
+							<AccordionTrigger className="px-6 py-4 hover:bg-accent/50 transition-colors">
+								<div className="flex items-center justify-between w-full">
+									<div className="flex items-center space-x-2">
+										<CardTitle className="text-xl">
+											{groupData.group?.title || 'General'}
+										</CardTitle>
+									</div>
+									{groupData.group?.docRef && (
+										<HelpCircle className="w-5 h-5 text-muted-foreground" />
+									)}
+								</div>
+							</AccordionTrigger>
+
+							<AccordionContent>
+								<div className="px-6 pb-6 space-y-6">
+									{/* Direct group properties */}
+									{Object.keys(groupData.properties).length > 0 && (
+										<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+											{Object.keys(groupData.properties).map(propId => {
+												const property = groupData.properties[propId];
+												const fieldConfig = {
+													...property,
+													id: propId,
+													title: property.title || propId
+												};
+
+												const currentValue = getPathValue(config, propId);
+
+												return (
+													<div key={propId}>
+														{property.type === 'array' ? (
+															<ArrayEditor
+																field={fieldConfig}
+																value={currentValue}
+																onChange={(value) => handleFieldChange(propId, value)}
+															/>
+														) : (
+															<FieldInput
+																field={fieldConfig}
+																value={currentValue}
+																onChange={(value) => handleFieldChange(propId, value)}
+															/>
+														)}
+													</div>
+												);
+											})}
 										</div>
-									</CardHeader>
-								</CollapsibleTrigger>
+									)}
 
-								<CollapsibleContent>
-									<CardContent className="space-y-6">
-										{/* Direct group properties */}
-										{Object.keys(groupData.properties).length > 0 && (
-											<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-												{Object.keys(groupData.properties).map(propId => {
-													const property = groupData.properties[propId];
-													const fieldConfig = {
-														...property,
-														id: propId,
-														title: property.title || propId
-													};
+									{/* Subtabs */}
+									{Object.keys(groupData.subtabs).length > 0 && (
+										<>
+											{Object.keys(groupData.properties).length > 0 && <Separator />}
+											{Object.keys(groupData.subtabs).map(subtabId => {
+												const subtabData = groupData.subtabs[subtabId];
+												const isSubtabExpanded = expandedSubtabs[subtabId] ?? true;
 
-													const currentValue = getPathValue(config, propId);
-
-													return (
-														<div key={propId}>
-															{property.type === 'array' ? (
-																<ArrayEditor
-																	field={fieldConfig}
-																	value={currentValue}
-																	onChange={(value) => handleFieldChange(propId, value)}
-																/>
-															) : (
-																<FieldInput
-																	field={fieldConfig}
-																	value={currentValue}
-																	onChange={(value) => handleFieldChange(propId, value)}
-																/>
-															)}
-														</div>
-													);
-												})}
-											</div>
-										)}
-
-										{/* Subtabs */}
-										{Object.keys(groupData.subtabs).length > 0 && (
-											<>
-												{Object.keys(groupData.properties).length > 0 && <Separator />}
-												{Object.keys(groupData.subtabs).map(subtabId => {
-													const subtabData = groupData.subtabs[subtabId];
-													const isSubtabExpanded = expandedSubtabs[subtabId] ?? true;
-
-													return (
-														<Card key={subtabId} variant="outline" className="border-muted">
-															<Collapsible open={isSubtabExpanded} onOpenChange={() => toggleSubtab(subtabId)}>
-																<CollapsibleTrigger asChild>
-																	<CardHeader className="cursor-pointer hover:bg-accent/30 transition-colors py-3">
-																		<div className="flex items-center justify-between">
-																			<div className="flex items-center space-x-2">
-																				{isSubtabExpanded ? (
-																					<ChevronDown className="w-4 h-4 text-muted-foreground" />
-																				) : (
-																					<ChevronRight className="w-4 h-4 text-muted-foreground" />
-																				)}
-																				<CardTitle className="text-lg font-medium">
-																					{subtabData.subtab?.title || subtabId}
-																				</CardTitle>
-																			</div>
+												return (
+													<Card key={subtabId} variant="outline" className="border-muted">
+														<Collapsible open={isSubtabExpanded} onOpenChange={() => toggleSubtab(subtabId)}>
+															<CollapsibleTrigger asChild>
+																<CardHeader className="cursor-pointer hover:bg-accent/30 transition-colors py-3">
+																	<div className="flex items-center justify-between">
+																		<div className="flex items-center space-x-2">
+																			{isSubtabExpanded ? (
+																				<ChevronDown className="w-4 h-4 text-muted-foreground" />
+																			) : (
+																				<ChevronRight className="w-4 h-4 text-muted-foreground" />
+																			)}
+																			<CardTitle className="text-lg font-medium">
+																				{subtabData.subtab?.title || subtabId}
+																			</CardTitle>
 																		</div>
-																	</CardHeader>
-																</CollapsibleTrigger>
+																	</div>
+																</CardHeader>
+															</CollapsibleTrigger>
 
-																<CollapsibleContent>
-																	<CardContent className="pt-0">
-																		<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-																			{Object.keys(subtabData.properties).map(propId => {
-																				const property = subtabData.properties[propId];
-																				const fieldConfig = {
-																					...property,
-																					id: propId,
-																					title: property.title || propId
-																				};
+															<CollapsibleContent>
+																<CardContent className="pt-0">
+																	<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+																		{Object.keys(subtabData.properties).map(propId => {
+																			const property = subtabData.properties[propId];
+																			const fieldConfig = {
+																				...property,
+																				id: propId,
+																				title: property.title || propId
+																			};
 
-																				const currentValue = getPathValue(config, propId);
+																			const currentValue = getPathValue(config, propId);
 
-																				return (
-																					<div key={propId}>
-																						{property.type === 'array' ? (
-																							<ArrayEditor
-																								field={fieldConfig}
-																								value={currentValue}
-																								onChange={(value) => handleFieldChange(propId, value)}
-																							/>
-																						) : (
-																							<FieldInput
-																								field={fieldConfig}
-																								value={currentValue}
-																								onChange={(value) => handleFieldChange(propId, value)}
-																							/>
-																						)}
-																					</div>
-																				);
-																			})}
-																		</div>
-																	</CardContent>
-																</CollapsibleContent>
-															</Collapsible>
-														</Card>
-													);
-												})}
-											</>
-										)}
-									</CardContent>
-								</CollapsibleContent>
-							</Collapsible>
-						</Card>
+																			return (
+																				<div key={propId}>
+																					{property.type === 'array' ? (
+																						<ArrayEditor
+																							field={fieldConfig}
+																							value={currentValue}
+																							onChange={(value) => handleFieldChange(propId, value)}
+																						/>
+																					) : (
+																						<FieldInput
+																							field={fieldConfig}
+																							value={currentValue}
+																							onChange={(value) => handleFieldChange(propId, value)}
+																						/>
+																					)}
+																				</div>
+																			);
+																		})}
+																	</div>
+																</CardContent>
+															</CollapsibleContent>
+														</Collapsible>
+													</Card>
+												);
+											})}
+										</>
+									)}
+								</div>
+							</AccordionContent>
+						</AccordionItem>
 					);
 				})}
-			</div>
+			</Accordion>
 		</div>
 	);
 };

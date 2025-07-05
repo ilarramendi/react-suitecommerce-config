@@ -6,7 +6,7 @@ import { Checkbox } from './ui/checkbox';
 import { Label } from './ui/label';
 import { Alert, AlertDescription } from './ui/alert';
 
-const FieldInput = ({ field, value, onChange, errors = [] }) => {
+const FieldInput = ({ field, value, onChange, errors = [], compact = false }) => {
 	const hasError = errors.length > 0;
 
 	const renderField = () => {
@@ -18,8 +18,8 @@ const FieldInput = ({ field, value, onChange, errors = [] }) => {
 						type="text"
 						value={value || ''}
 						onChange={(e) => onChange(e.target.value)}
-						placeholder={field.description}
-						className={hasError ? 'border-destructive' : ''}
+						placeholder={compact ? field.title : field.description}
+						className={`${hasError ? 'border-destructive' : ''} ${compact ? 'h-8' : ''}`}
 					/>
 				);
 
@@ -30,8 +30,8 @@ const FieldInput = ({ field, value, onChange, errors = [] }) => {
 						type="number"
 						value={value || ''}
 						onChange={(e) => onChange(field.type === 'integer' ? parseInt(e.target.value) : parseFloat(e.target.value))}
-						placeholder={field.description}
-						className={hasError ? 'border-destructive' : ''}
+						placeholder={compact ? field.title : field.description}
+						className={`${hasError ? 'border-destructive' : ''} ${compact ? 'h-8' : ''}`}
 					/>
 				);
 
@@ -44,12 +44,14 @@ const FieldInput = ({ field, value, onChange, errors = [] }) => {
 							checked={value || false}
 							onCheckedChange={(checked) => onChange(checked)}
 						/>
-						<Label 
-							htmlFor={field.id} 
-							className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-						>
-							{field.title}
-						</Label>
+						{!compact && (
+							<Label 
+								htmlFor={field.id} 
+								className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+							>
+								{field.title}
+							</Label>
+						)}
 					</div>
 				);
 
@@ -57,8 +59,8 @@ const FieldInput = ({ field, value, onChange, errors = [] }) => {
 			case 'select':
 				return (
 					<Select value={value || ''} onValueChange={(value) => onChange(value)}>
-						<SelectTrigger className={hasError ? 'border-destructive' : ''}>
-							<SelectValue placeholder="Select an option" />
+						<SelectTrigger className={`${hasError ? 'border-destructive' : ''} ${compact ? 'h-8' : ''}`}>
+							<SelectValue placeholder={compact ? field.title : 'Select an option'} />
 						</SelectTrigger>
 						<SelectContent>
 							{(field.enum || field.options || []).map((option, idx) => (
@@ -76,12 +78,29 @@ const FieldInput = ({ field, value, onChange, errors = [] }) => {
 						type="text"
 						value={value || ''}
 						onChange={(e) => onChange(e.target.value)}
-						placeholder={field.description}
-						className={hasError ? 'border-destructive' : ''}
+						placeholder={compact ? field.title : field.description}
+						className={`${hasError ? 'border-destructive' : ''} ${compact ? 'h-8' : ''}`}
 					/>
 				);
 		}
 	};
+
+	// In compact mode, just return the field without labels and descriptions
+	if (compact) {
+		return (
+			<div className="space-y-1">
+				{renderField()}
+				{errors.map((error, idx) => (
+					<Alert key={idx} variant="destructive" className="py-1">
+						<AlertCircle className="h-3 w-3" />
+						<AlertDescription className="text-xs">
+							{error}
+						</AlertDescription>
+					</Alert>
+				))}
+			</div>
+		);
+	}
 
 	return (
 		<div className="space-y-2">

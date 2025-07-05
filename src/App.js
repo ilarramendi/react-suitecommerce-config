@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { mockWebsites, mockManifest, mockExistingConfig } from './data/mockData';
+import { mockWebsites, mockManifest } from './data/mockData';
+import mockExistingConfig from './data/config.json';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import WebsiteSelector from './components/WebsiteSelector';
