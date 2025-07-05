@@ -1,5 +1,7 @@
 import React from 'react';
 import { CheckCircle } from 'lucide-react';
+import { Button } from './ui/button';
+import { Alert, AlertDescription } from './ui/alert';
 
 const Header = ({ currentView, saveStatus, onBack }) => {
 	return (
@@ -15,17 +17,20 @@ const Header = ({ currentView, saveStatus, onBack }) => {
 					{currentView === 'editor' && (
 						<div className="flex items-center space-x-4">
 							{saveStatus === 'success' && (
-								<div className="flex items-center text-green-600">
-									<CheckCircle className="w-5 h-5 mr-2" />
-									Configuration saved successfully
-								</div>
+								<Alert className="w-auto border-green-200 bg-green-50 px-3 py-2">
+									<CheckCircle className="h-4 w-4 text-green-600" />
+									<AlertDescription className="text-green-800 font-medium">
+										Configuration saved successfully
+									</AlertDescription>
+								</Alert>
 							)}
-							<button
+							<Button
+								variant="secondary"
 								onClick={onBack}
-								className="px-4 py-2 text-sm bg-gray-600 text-white rounded-md hover:bg-gray-700"
+								className="px-4 py-2"
 							>
 								Back to Selection
-							</button>
+							</Button>
 						</div>
 					)}
 				</div>

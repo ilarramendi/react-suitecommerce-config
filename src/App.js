@@ -38,7 +38,7 @@ const SuiteCommerceConfigApp = () => {
 	};
 
 	return (
-		<div className="min-h-screen bg-gray-100">
+		<div className="min-h-screen bg-background text-foreground">
 			<Header
 				currentView={currentView}
 				saveStatus={saveStatus}

@@ -3,6 +3,12 @@ import { ChevronDown, ChevronRight, Save, HelpCircle, AlertCircle } from 'lucide
 import { ConfigurationTool } from '../utils/ConfigurationTool';
 import FieldInput from './FieldInput';
 import ArrayEditor from './ArrayEditor';
+import { Button } from './ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
+import { Alert, AlertDescription, AlertTitle } from './ui/alert';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from './ui/collapsible';
+import { Badge } from './ui/badge';
+import { Separator } from './ui/separator';
 
 const SchemaEditor = ({ manifest, configuration, onSave }) => {
 	const [config, setConfig] = useState(configuration || {});
@@ -79,21 +85,23 @@ const SchemaEditor = ({ manifest, configuration, onSave }) => {
 		return acc;
 	}, {});
 
+	const hasValidationErrors = validationErrors.schema?.length > 0 || validationErrors.references?.length > 0;
+
 	return (
 		<div className="max-w-6xl mx-auto p-6 space-y-6">
 			<div className="flex items-center justify-between">
-				<h1 className="text-3xl font-bold text-gray-900">SuiteCommerce Configuration</h1>
-				<div className="flex space-x-3">
-					{(validationErrors.schema?.length > 0 || validationErrors.references?.length > 0) && (
-						<div className="flex items-center text-red-600">
-							<AlertCircle className="w-5 h-5 mr-2" />
+				<h1 className="text-3xl font-bold">SuiteCommerce Configuration</h1>
+				<div className="flex items-center space-x-3">
+					{hasValidationErrors && (
+						<Badge variant="destructive" className="flex items-center">
+							<AlertCircle className="w-4 h-4 mr-1" />
 							Validation Errors
-						</div>
+						</Badge>
 					)}
-					<button
+					<Button
 						onClick={handleSave}
 						disabled={isSaving}
-						className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50"
+						className="flex items-center"
 					>
 						{isSaving ? (
 							<div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />
@@ -101,20 +109,23 @@ const SchemaEditor = ({ manifest, configuration, onSave }) => {
 							<Save className="w-4 h-4 mr-2" />
 						)}
 						{isSaving ? 'Saving...' : 'Save Configuration'}
-					</button>
+					</Button>
 				</div>
 			</div>
 
 			{/* Validation Errors Display */}
-			{(validationErrors.schema?.length > 0 || validationErrors.references?.length > 0) && (
-				<div className="bg-red-50 border border-red-200 rounded-md p-4">
-					<h3 className="text-lg font-medium text-red-800 mb-2">Validation Errors</h3>
-					<ul className="list-disc list-inside space-y-1">
-						{[...(validationErrors.schema || []), ...(validationErrors.references || [])].map((error, idx) => (
-							<li key={idx} className="text-sm text-red-700">{error}</li>
-						))}
-					</ul>
-				</div>
+			{hasValidationErrors && (
+				<Alert variant="destructive">
+					<AlertCircle className="h-4 w-4" />
+					<AlertTitle>Validation Errors</AlertTitle>
+					<AlertDescription>
+						<ul className="list-disc list-inside space-y-1 mt-2">
+							{[...(validationErrors.schema || []), ...(validationErrors.references || [])].map((error, idx) => (
+								<li key={idx} className="text-sm">{error}</li>
+							))}
+						</ul>
+					</AlertDescription>
+				</Alert>
 			)}
 
 			{/* Configuration Form */}
@@ -124,125 +135,136 @@ const SchemaEditor = ({ manifest, configuration, onSave }) => {
 					const isExpanded = expandedGroups[groupId] ?? true;
 
 					return (
-						<div key={groupId} className="bg-white border border-gray-200 rounded-lg shadow-sm">
-							<div
-								className="flex items-center justify-between p-4 cursor-pointer hover:bg-gray-50"
-								onClick={() => toggleGroup(groupId)}
-							>
-								<div className="flex items-center space-x-2">
-									{isExpanded ? (
-										<ChevronDown className="w-5 h-5 text-gray-500" />
-									) : (
-										<ChevronRight className="w-5 h-5 text-gray-500" />
-									)}
-									<h2 className="text-xl font-semibold text-gray-900">
-										{groupData.group?.title || 'General'}
-									</h2>
-								</div>
-								{groupData.group?.docRef && (
-									<HelpCircle className="w-5 h-5 text-gray-400" />
-								)}
-							</div>
-
-							{isExpanded && (
-								<div className="p-6 pt-0 space-y-6">
-									{/* Direct group properties */}
-									{Object.keys(groupData.properties).length > 0 && (
-										<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-											{Object.keys(groupData.properties).map(propId => {
-												const property = groupData.properties[propId];
-												const fieldConfig = {
-													...property,
-													id: propId,
-													title: property.title || propId
-												};
-
-												const currentValue = getPathValue(config, propId);
-
-												return (
-													<div key={propId}>
-														{property.type === 'array' ? (
-															<ArrayEditor
-																field={fieldConfig}
-																value={currentValue}
-																onChange={(value) => handleFieldChange(propId, value)}
-															/>
-														) : (
-															<FieldInput
-																field={fieldConfig}
-																value={currentValue}
-																onChange={(value) => handleFieldChange(propId, value)}
-															/>
-														)}
-													</div>
-												);
-											})}
-										</div>
-									)}
-
-									{/* Subtabs */}
-									{Object.keys(groupData.subtabs).map(subtabId => {
-										const subtabData = groupData.subtabs[subtabId];
-										const isSubtabExpanded = expandedSubtabs[subtabId] ?? true;
-
-										return (
-											<div key={subtabId} className="border border-gray-100 rounded-md">
-												<div
-													className="flex items-center justify-between p-3 bg-gray-50 cursor-pointer hover:bg-gray-100"
-													onClick={() => toggleSubtab(subtabId)}
-												>
-													<div className="flex items-center space-x-2">
-														{isSubtabExpanded ? (
-															<ChevronDown className="w-4 h-4 text-gray-500" />
-														) : (
-															<ChevronRight className="w-4 h-4 text-gray-500" />
-														)}
-														<h3 className="text-lg font-medium text-gray-800">
-															{subtabData.subtab?.title || subtabId}
-														</h3>
-													</div>
-												</div>
-
-												{isSubtabExpanded && (
-													<div className="p-4">
-														<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-															{Object.keys(subtabData.properties).map(propId => {
-																const property = subtabData.properties[propId];
-																const fieldConfig = {
-																	...property,
-																	id: propId,
-																	title: property.title || propId
-																};
-
-																const currentValue = getPathValue(config, propId);
-
-																return (
-																	<div key={propId}>
-																		{property.type === 'array' ? (
-																			<ArrayEditor
-																				field={fieldConfig}
-																				value={currentValue}
-																				onChange={(value) => handleFieldChange(propId, value)}
-																			/>
-																		) : (
-																			<FieldInput
-																				field={fieldConfig}
-																				value={currentValue}
-																				onChange={(value) => handleFieldChange(propId, value)}
-																			/>
-																		)}
-																	</div>
-																);
-															})}
-														</div>
-													</div>
+						<Card key={groupId} className="shadow-sm">
+							<Collapsible open={isExpanded} onOpenChange={() => toggleGroup(groupId)}>
+								<CollapsibleTrigger asChild>
+									<CardHeader className="cursor-pointer hover:bg-accent/50 transition-colors">
+										<div className="flex items-center justify-between">
+											<div className="flex items-center space-x-2">
+												{isExpanded ? (
+													<ChevronDown className="w-5 h-5 text-muted-foreground" />
+												) : (
+													<ChevronRight className="w-5 h-5 text-muted-foreground" />
 												)}
+												<CardTitle className="text-xl">
+													{groupData.group?.title || 'General'}
+												</CardTitle>
 											</div>
-										);
-									})}
-								</div>
-							)}
-						</div>
+											{groupData.group?.docRef && (
+												<HelpCircle className="w-5 h-5 text-muted-foreground" />
+											)}
+										</div>
+									</CardHeader>
+								</CollapsibleTrigger>
+
+								<CollapsibleContent>
+									<CardContent className="space-y-6">
+										{/* Direct group properties */}
+										{Object.keys(groupData.properties).length > 0 && (
+											<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+												{Object.keys(groupData.properties).map(propId => {
+													const property = groupData.properties[propId];
+													const fieldConfig = {
+														...property,
+														id: propId,
+														title: property.title || propId
+													};
+
+													const currentValue = getPathValue(config, propId);
+
+													return (
+														<div key={propId}>
+															{property.type === 'array' ? (
+																<ArrayEditor
+																	field={fieldConfig}
+																	value={currentValue}
+																	onChange={(value) => handleFieldChange(propId, value)}
+																/>
+															) : (
+																<FieldInput
+																	field={fieldConfig}
+																	value={currentValue}
+																	onChange={(value) => handleFieldChange(propId, value)}
+																/>
+															)}
+														</div>
+													);
+												})}
+											</div>
+										)}
+
+										{/* Subtabs */}
+										{Object.keys(groupData.subtabs).length > 0 && (
+											<>
+												{Object.keys(groupData.properties).length > 0 && <Separator />}
+												{Object.keys(groupData.subtabs).map(subtabId => {
+													const subtabData = groupData.subtabs[subtabId];
+													const isSubtabExpanded = expandedSubtabs[subtabId] ?? true;
+
+													return (
+														<Card key={subtabId} variant="outline" className="border-muted">
+															<Collapsible open={isSubtabExpanded} onOpenChange={() => toggleSubtab(subtabId)}>
+																<CollapsibleTrigger asChild>
+																	<CardHeader className="cursor-pointer hover:bg-accent/30 transition-colors py-3">
+																		<div className="flex items-center justify-between">
+																			<div className="flex items-center space-x-2">
+																				{isSubtabExpanded ? (
+																					<ChevronDown className="w-4 h-4 text-muted-foreground" />
+																				) : (
+																					<ChevronRight className="w-4 h-4 text-muted-foreground" />
+																				)}
+																				<CardTitle className="text-lg font-medium">
+																					{subtabData.subtab?.title || subtabId}
+																				</CardTitle>
+																			</div>
+																		</div>
+																	</CardHeader>
+																</CollapsibleTrigger>
+
+																<CollapsibleContent>
+																	<CardContent className="pt-0">
+																		<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+																			{Object.keys(subtabData.properties).map(propId => {
+																				const property = subtabData.properties[propId];
+																				const fieldConfig = {
+																					...property,
+																					id: propId,
+																					title: property.title || propId
+																				};
+
+																				const currentValue = getPathValue(config, propId);
+
+																				return (
+																					<div key={propId}>
+																						{property.type === 'array' ? (
+																							<ArrayEditor
+																								field={fieldConfig}
+																								value={currentValue}
+																								onChange={(value) => handleFieldChange(propId, value)}
+																							/>
+																						) : (
+																							<FieldInput
+																								field={fieldConfig}
+																								value={currentValue}
+																								onChange={(value) => handleFieldChange(propId, value)}
+																							/>
+																						)}
+																					</div>
+																				);
+																			})}
+																		</div>
+																	</CardContent>
+																</CollapsibleContent>
+															</Collapsible>
+														</Card>
+													);
+												})}
+											</>
+										)}
+									</CardContent>
+								</CollapsibleContent>
+							</Collapsible>
+						</Card>
 					);
 				})}
 			</div>
