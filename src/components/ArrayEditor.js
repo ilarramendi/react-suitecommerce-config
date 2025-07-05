@@ -1,5 +1,5 @@
-import React from 'react';
-import { Plus, Trash2, AlertCircle, HelpCircle } from 'lucide-react';
+import React, { useState } from 'react';
+import { Plus, Trash2, AlertCircle, HelpCircle, X } from 'lucide-react';
 import FieldInput from './FieldInput';
 import { Button } from './ui/button';
 import { Card, CardContent } from './ui/card';
@@ -9,6 +9,9 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '.
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './ui/tooltip';
 
 const ArrayEditor = ({ field, value = [], onChange, errors = [] }) => {
+	const [editingIndex, setEditingIndex] = useState(null);
+	const [editingValue, setEditingValue] = useState('');
+
 	const addItem = () => {
 		const newItem = field.items.type === 'object'
 			? Object.keys(field.items.properties || {}).reduce((acc, key) => {
@@ -37,10 +40,112 @@ const ArrayEditor = ({ field, value = [], onChange, errors = [] }) => {
 		onChange(newValue);
 	};
 
+	const startEditing = (index) => {
+		setEditingIndex(index);
+		setEditingValue(value[index]);
+	};
+
+	const finishEditing = () => {
+		if (editingIndex !== null) {
+			updateItem(editingIndex, editingValue);
+		}
+		setEditingIndex(null);
+		setEditingValue('');
+	};
+
+	const handleKeyDown = (e) => {
+		if (e.key === 'Enter') {
+			finishEditing();
+		} else if (e.key === 'Escape') {
+			setEditingIndex(null);
+			setEditingValue('');
+		}
+	};
+
 	const isObjectArray = field.items.type === 'object';
 	const properties = isObjectArray ? Object.keys(field.items.properties || {}) : [];
 
-	return (
+	// TODO validations
+	// Simple array display for non-object types
+	const renderSimpleArray = () => (
+		<div className="space-y-4">
+			<div className="flex items-center justify-between">
+				<Label className="text-sm font-medium">
+					{field.title}
+					{field.mandatory && <span className="text-destructive ml-1">*</span>}
+				</Label>
+				<Button
+					variant="outline"
+					size="sm"
+					onClick={addItem}
+					className="flex items-center"
+				>
+					<Plus className="w-4 h-4 mr-1" />
+					Add
+				</Button>
+			</div>
+
+			{field.description && (
+				<p className="text-xs text-muted-foreground">{field.description}</p>
+			)}
+
+			<Card className="border-muted">
+				<CardContent className="p-4">
+					{value.length === 0 ? (
+						<div className="text-center py-8 text-muted-foreground">
+							No items added yet. Click "Add" to create your first item.
+						</div>
+					) : (
+						<div className="flex flex-wrap gap-2">
+							{value.map((item, index) => (
+								<div
+									key={index}
+									className="group relative inline-flex items-center bg-secondary/60 hover:bg-secondary/80 border rounded-full px-3 py-1.5 text-sm transition-colors"
+								>
+									{editingIndex === index ? (
+										<input
+											type="text"
+											value={editingValue}
+											onChange={(e) => setEditingValue(e.target.value)}
+											onBlur={finishEditing}
+											onKeyDown={handleKeyDown}
+											className="bg-transparent border-none outline-none min-w-[60px] max-w-[200px] text-sm"
+											autoFocus
+										/>
+									) : (
+										<span
+											className="cursor-pointer select-none"
+											onClick={() => startEditing(index)}
+										>
+											{item || '@ Click to edit @'}
+										</span>
+									)}
+									<button
+										onClick={() => removeItem(index)}
+										className="ml-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 text-muted-foreground hover:text-destructive"
+									>
+										<X className="w-3 h-3" />
+									</button>
+								</div>
+							))}
+						</div>
+					)}
+				</CardContent>
+			</Card>
+
+			{errors.map((error, idx) => (
+				<Alert key={idx} variant="destructive" className="py-2">
+					<AlertCircle className="h-4 w-4" />
+					<AlertDescription className="text-xs">
+						{error}
+					</AlertDescription>
+				</Alert>
+			))}
+		</div>
+	);
+
+	// Table display for object arrays
+	const renderObjectArray = () => (
 		<div className="space-y-4">
 			<div className="flex items-center justify-between">
 				<Label className="text-sm font-medium">
@@ -68,86 +173,55 @@ const ArrayEditor = ({ field, value = [], onChange, errors = [] }) => {
 						<Table>
 							<TableHeader>
 								<TableRow>
-									{isObjectArray ? (
-										properties.map(propKey => {
-											const property = field.items.properties[propKey];
-											return (
-												<TableHead key={propKey} className="min-w-[150px]">
-													<div className="flex items-center space-x-1">
-														<span>{property.title || propKey}</span>
-														{property.mandatory && <span className="text-destructive">*</span>}
-														{property.description && (
-															<Tooltip>
-																<TooltipTrigger asChild>
-																	<HelpCircle className="w-3 h-3 text-muted-foreground cursor-help" />
-																</TooltipTrigger>
-																<TooltipContent>
-																	<div className="max-w-xs text-sm">
-																		{property.description}
-																	</div>
-																</TooltipContent>
-															</Tooltip>
-														)}
-													</div>
-												</TableHead>
-											);
-										})
-									) : (
-										<TableHead>
-											<div className="flex items-center space-x-1">
-												<span>{field.items.title || 'Value'}</span>
-												{field.items.description && (
-													<Tooltip>
-														<TooltipTrigger asChild>
-															<HelpCircle className="w-3 h-3 text-muted-foreground cursor-help" />
-														</TooltipTrigger>
-														<TooltipContent>
-															<div className="max-w-xs text-sm">
-																{field.items.description}
-															</div>
-														</TooltipContent>
-													</Tooltip>
-												)}
-											</div>
-										</TableHead>
-									)}
+									{properties.map(propKey => {
+										const property = field.items.properties[propKey];
+										return (
+											<TableHead key={propKey} className="min-w-[150px]">
+												<div className="flex items-center space-x-1">
+													<span>{property.title || propKey}</span>
+													{property.mandatory && <span className="text-destructive">*</span>}
+													{property.description && (
+														<Tooltip>
+															<TooltipTrigger asChild>
+																<HelpCircle className="w-3 h-3 text-muted-foreground cursor-help" />
+															</TooltipTrigger>
+															<TooltipContent>
+																<div className="max-w-xs text-sm">
+																	{property.description}
+																</div>
+															</TooltipContent>
+														</Tooltip>
+													)}
+												</div>
+											</TableHead>
+										);
+									})}
 									<TableHead className="w-[100px]">Actions</TableHead>
 								</TableRow>
 							</TableHeader>
 							<TableBody>
 								{value.length === 0 ? (
 									<TableRow>
-										<TableCell colSpan={isObjectArray ? properties.length + 1 : 2} className="text-center py-8 text-muted-foreground">
+										<TableCell colSpan={properties.length + 1} className="text-center py-8 text-muted-foreground">
 											No items added yet. Click "Add" to create your first item.
 										</TableCell>
 									</TableRow>
 								) : (
 									value.map((item, index) => (
 										<TableRow key={index}>
-											{isObjectArray ? (
-												properties.map(propKey => {
-													const property = field.items.properties[propKey];
-													return (
-														<TableCell key={propKey} className="p-2">
-															<FieldInput
-																field={{ ...property, title: property.title || propKey }}
-																value={item[propKey]}
-																onChange={(val) => updateItemProperty(index, propKey, val)}
-																compact={true}
-															/>
-														</TableCell>
-													);
-												})
-											) : (
-												<TableCell className="p-2">
-													<FieldInput
-														field={field.items}
-														value={item}
-														onChange={(val) => updateItem(index, val)}
-														compact={true}
-													/>
-												</TableCell>
-											)}
+											{properties.map(propKey => {
+												const property = field.items.properties[propKey];
+												return (
+													<TableCell key={propKey} className="p-2">
+														<FieldInput
+															field={{ ...property, title: property.title || propKey }}
+															value={item[propKey]}
+															onChange={(val) => updateItemProperty(index, propKey, val)}
+															compact={true}
+														/>
+													</TableCell>
+												);
+											})}
 											<TableCell className="p-2">
 												<Button
 													variant="destructive"
@@ -177,6 +251,9 @@ const ArrayEditor = ({ field, value = [], onChange, errors = [] }) => {
 			))}
 		</div>
 	);
+
+	// Choose rendering method based on array type
+	return isObjectArray ? renderObjectArray() : renderSimpleArray();
 };
 
 export default ArrayEditor; 
