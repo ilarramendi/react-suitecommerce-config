@@ -1,21 +1,21 @@
 import React, { useState, useEffect } from 'react';
-import { ChevronDown, ChevronRight, Save, HelpCircle, AlertCircle } from 'lucide-react';
+import { Save, HelpCircle, AlertCircle } from 'lucide-react';
 import { ConfigurationTool } from '../utils/ConfigurationTool';
 import FieldInput from './FieldInput';
 import ArrayEditor from './ArrayEditor';
 import { Button } from './ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Alert, AlertDescription, AlertTitle } from './ui/alert';
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from './ui/collapsible';
-import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from './ui/accordion';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from './ui/accordion';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
 import { Badge } from './ui/badge';
 import { Separator } from './ui/separator';
 
 const SchemaEditor = ({ manifest, configuration, onSave }) => {
 	const [config, setConfig] = useState(configuration || {});
-	const [expandedSubtabs, setExpandedSubtabs] = useState({});
 	const [validationErrors, setValidationErrors] = useState({});
 	const [isSaving, setIsSaving] = useState(false);
+	const [activeTab, setActiveTab] = useState('');
 
 	const configTool = new ConfigurationTool();
 
@@ -43,10 +43,6 @@ const SchemaEditor = ({ manifest, configuration, onSave }) => {
 
 	const handleFieldChange = (fieldId, value) => {
 		setConfig(prev => setPathValue(prev, fieldId, value));
-	};
-
-	const toggleSubtab = (subtabId) => {
-		setExpandedSubtabs(prev => ({ ...prev, [subtabId]: !prev[subtabId] }));
 	};
 
 	const handleSave = async () => {
@@ -82,6 +78,13 @@ const SchemaEditor = ({ manifest, configuration, onSave }) => {
 	}, {});
 
 	const hasValidationErrors = validationErrors.schema?.length > 0 || validationErrors.references?.length > 0;
+
+	// Set initial active tab
+	useEffect(() => {
+		if (!activeTab && Object.keys(groupedManifest).length > 0) {
+			setActiveTab(Object.keys(groupedManifest)[0]);
+		}
+	}, [groupedManifest, activeTab]);
 
 	return (
 		<div className="max-w-6xl mx-auto p-6 space-y-6">
@@ -125,27 +128,28 @@ const SchemaEditor = ({ manifest, configuration, onSave }) => {
 			)}
 
 			{/* Configuration Form */}
-			<Accordion type="single" collapsible className="space-y-4">
+			<Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+				<TabsList className="w-full justify-start">
+					{Object.keys(groupedManifest).map(groupId => {
+						const groupData = groupedManifest[groupId];
+						return (
+							<TabsTrigger key={groupId} value={groupId} className="flex items-center space-x-2">
+								<span>{groupData.group?.title || 'General'}</span>
+								{groupData.group?.docRef && (
+									<HelpCircle className="w-4 h-4 text-muted-foreground" />
+								)}
+							</TabsTrigger>
+						);
+					})}
+				</TabsList>
+
 				{Object.keys(groupedManifest).map(groupId => {
 					const groupData = groupedManifest[groupId];
 
 					return (
-						<AccordionItem key={groupId} value={groupId} className="border rounded-lg shadow-sm">
-							<AccordionTrigger className="px-6 py-4 hover:bg-accent/50 transition-colors">
-								<div className="flex items-center justify-between w-full">
-									<div className="flex items-center space-x-2">
-										<CardTitle className="text-xl">
-											{groupData.group?.title || 'General'}
-										</CardTitle>
-									</div>
-									{groupData.group?.docRef && (
-										<HelpCircle className="w-5 h-5 text-muted-foreground" />
-									)}
-								</div>
-							</AccordionTrigger>
-
-							<AccordionContent>
-								<div className="px-6 pb-6 space-y-6">
+						<TabsContent key={groupId} value={groupId} className="space-y-6 mt-6">
+							<Card>
+								<CardContent className="p-6 space-y-6">
 									{/* Direct group properties */}
 									{Object.keys(groupData.properties).length > 0 && (
 										<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -184,76 +188,63 @@ const SchemaEditor = ({ manifest, configuration, onSave }) => {
 									{Object.keys(groupData.subtabs).length > 0 && (
 										<>
 											{Object.keys(groupData.properties).length > 0 && <Separator />}
-											{Object.keys(groupData.subtabs).map(subtabId => {
-												const subtabData = groupData.subtabs[subtabId];
-												const isSubtabExpanded = expandedSubtabs[subtabId] ?? true;
+											<Accordion type="single" collapsible className="space-y-4">
+												{Object.keys(groupData.subtabs).map(subtabId => {
+													const subtabData = groupData.subtabs[subtabId];
 
-												return (
-													<Card key={subtabId} variant="outline" className="border-muted">
-														<Collapsible open={isSubtabExpanded} onOpenChange={() => toggleSubtab(subtabId)}>
-															<CollapsibleTrigger asChild>
-																<CardHeader className="cursor-pointer hover:bg-accent/30 transition-colors py-3">
-																	<div className="flex items-center justify-between">
-																		<div className="flex items-center space-x-2">
-																			{isSubtabExpanded ? (
-																				<ChevronDown className="w-4 h-4 text-muted-foreground" />
-																			) : (
-																				<ChevronRight className="w-4 h-4 text-muted-foreground" />
-																			)}
-																			<CardTitle className="text-lg font-medium">
-																				{subtabData.subtab?.title || subtabId}
-																			</CardTitle>
-																		</div>
-																	</div>
-																</CardHeader>
-															</CollapsibleTrigger>
+													return (
+														<AccordionItem key={subtabId} value={subtabId} className="border rounded-lg">
+															<AccordionTrigger className="px-4 py-3 hover:bg-accent/30 transition-colors">
+																<div className="flex items-center space-x-2">
+																	<CardTitle className="text-lg font-medium">
+																		{subtabData.subtab?.title || subtabId}
+																	</CardTitle>
+																</div>
+															</AccordionTrigger>
+															<AccordionContent className="px-4 pb-4">
+																<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+																	{Object.keys(subtabData.properties).map(propId => {
+																		const property = subtabData.properties[propId];
+																		const fieldConfig = {
+																			...property,
+																			id: propId,
+																			title: property.title || propId
+																		};
 
-															<CollapsibleContent>
-																<CardContent className="pt-0">
-																	<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-																		{Object.keys(subtabData.properties).map(propId => {
-																			const property = subtabData.properties[propId];
-																			const fieldConfig = {
-																				...property,
-																				id: propId,
-																				title: property.title || propId
-																			};
+																		const currentValue = getPathValue(config, propId);
 
-																			const currentValue = getPathValue(config, propId);
-
-																			return (
-																				<div key={propId}>
-																					{property.type === 'array' ? (
-																						<ArrayEditor
-																							field={fieldConfig}
-																							value={currentValue}
-																							onChange={(value) => handleFieldChange(propId, value)}
-																						/>
-																					) : (
-																						<FieldInput
-																							field={fieldConfig}
-																							value={currentValue}
-																							onChange={(value) => handleFieldChange(propId, value)}
-																						/>
-																					)}
-																				</div>
-																			);
-																		})}
-																	</div>
-																</CardContent>
-															</CollapsibleContent>
-														</Collapsible>
-													</Card>
-												);
-											})}
+																		return (
+																			<div key={propId}>
+																				{property.type === 'array' ? (
+																					<ArrayEditor
+																						field={fieldConfig}
+																						value={currentValue}
+																						onChange={(value) => handleFieldChange(propId, value)}
+																					/>
+																				) : (
+																					<FieldInput
+																						field={fieldConfig}
+																						value={currentValue}
+																						onChange={(value) => handleFieldChange(propId, value)}
+																					/>
+																				)}
+																			</div>
+																		);
+																	})}
+																</div>
+															</AccordionContent>
+														</AccordionItem>
+													);
+												})}
+											</Accordion>
 										</>
 									)}
-								</div>
-							</AccordionContent>
-						</AccordionItem>
+								</CardContent>
+							</Card>
+						</TabsContent>
 					);
 				})}
-			</Accordion>
+			</Tabs>
 		</div>
 	);
 };
