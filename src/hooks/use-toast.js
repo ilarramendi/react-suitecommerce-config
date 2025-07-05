@@ -30,7 +30,7 @@ const addToRemoveQueue = (toastId) => {
     toastTimeouts.delete(toastId)
     dispatch({
       type: "REMOVE_TOAST",
-      toastId: toastId,
+      toastId,
     })
   }, TOAST_REMOVE_DELAY)
 
@@ -126,7 +126,7 @@ function toast({
   })
 
   return {
-    id: id,
+    id,
     dismiss,
     update,
   }

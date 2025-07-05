@@ -217,7 +217,7 @@ const ArrayEditor = ({ field, value = [], onChange, errors = [] }) => {
 															field={{ ...property, title: property.title || propKey }}
 															value={item[propKey]}
 															onChange={(val) => updateItemProperty(index, propKey, val)}
-															compact={true}
+															compact
 														/>
 													</TableCell>
 												);
